@@ -1,5 +1,8 @@
-export interface UserPost {
+export interface User {
     id?: number;
-    body?: string;
+    user_name?: string;
+    avatar?: string;
+    email?: string;
+    user_status?: number;
     createdAt?: Date;
 }
