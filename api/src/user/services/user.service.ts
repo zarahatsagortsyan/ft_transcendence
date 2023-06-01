@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../models/post.entity';
+import { User } from '../models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../models/post.interface';
+import { IUser } from '../models/user.interface';
 import { Observable, Subject, from } from 'rxjs';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(UserEntity)
-        private readonly userPostRepository: Repository<UserEntity>
+        @InjectRepository(User)
+        private readonly userPostRepository: Repository<User>
     ) {}
-    createPost(userPost: User): Observable<User> {
+    createUser(userPost: IUser): Observable<User> {
         return from(this.userPostRepository.save(userPost));
     }
 
