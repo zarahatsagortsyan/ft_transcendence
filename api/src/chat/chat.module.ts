@@ -4,6 +4,8 @@ import { ChatService } from './services/chat.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chat } from './models/chat.entity';
 import { Message } from './models/message.entity';
+import { Chat_Membership } from './models/chat_membership.entity';
+
 import { UserModule } from 'src/user/user.module';
 import { MessageController } from './controllers/message.controller';
 import { MessageService } from './services/message.service';
@@ -12,6 +14,8 @@ import { MessageService } from './services/message.service';
   imports: [
     TypeOrmModule.forFeature([Chat]),
     TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([Chat_Membership]),
+
     UserModule,
   ],
   controllers: [ChatController, MessageController],

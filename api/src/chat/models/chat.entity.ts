@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { User } from 'src/user/models/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany,ManyToOne, JoinColumn } from "typeorm";
 
 export enum ChatMode {
     PUBLIC = 'public',
@@ -10,18 +11,13 @@ export enum ChatMode {
 export class Chat {
     @PrimaryGeneratedColumn()
     id: number;
-
+    
     @Column()
     chat_name: string;
 
-    @Column('text', { array: true })
-    members: string[];
-
-    @Column()
-    owner_id: number;
-
-    @Column('integer', { array: true })
-    admin_ids: number[];
+    @ManyToOne(type => User)
+    @JoinColumn({ name: 'owner_id' })
+    owner_id: User;
 
     @Column({
         type: 'enum',
@@ -31,10 +27,4 @@ export class Chat {
 
     @Column({ nullable: true })
     password: string;
-
-    @Column('integer', { array: true })
-    blocked_users: number[];
-    
-    @Column()
-    is_direct: boolean;
 }
