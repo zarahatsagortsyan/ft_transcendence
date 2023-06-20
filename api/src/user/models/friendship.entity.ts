@@ -2,9 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColum
 import { User } from "./user.entity";
 
 export enum FriendStatus {
-    ONLINE = 'online',
-    OFFLINE = 'offline',
-    INGAME = 'in_game',
+    ONLINE = 'accepted',
+    OFFLINE = 'pending',
+    // INGAME = 'in_game',
 }
 
 @Entity('friendship')

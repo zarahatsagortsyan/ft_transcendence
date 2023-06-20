@@ -69,14 +69,14 @@ export class UserService {
             return from(this.friendshipRepository.save(friendship));
         }
 
-        //friend request accept
+        //friend request accept it must update friendshi[p table and change the status accordingly
         async friendRequestAccept(id: number, status) {
             const friendshipToUpdate = await this.friendshipRepository.findOneById(id);
             friendshipToUpdate.friend_status = status;
             return from(this.friendshipRepository.save(friendshipToUpdate));
         }
         
-        //friend request decline
+        //friend request decline delete the data from table when declining
         async friendRequestDecline(id:number) {
             const friendshipToDelete = await this.friendshipRepository.findOneById(id);
             return from(this.friendshipRepository.remove(friendshipToDelete));
