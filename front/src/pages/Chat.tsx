@@ -688,12 +688,49 @@
 
 // __________________________________________________________
 
+// import React, { useState } from 'react';
+// import { Link } from 'react-router-dom';
+// import './Chat.css';
+
+// interface ChatProps {
+//   messages: { [channelName: string]: string[] };
+//   setMessages: React.Dispatch<React.SetStateAction<{ [channelName: string]: string[] }>>;
+// }
+
+// interface Channel {
+//   name: string;
+//   isPrivate: boolean;
+//   password?: string;
+// }
+
+// const Chat: React.FC<ChatProps> = ({ messages }) => {
+//   const [newMessage, setNewMessage] = useState('');
+//   const [channelList, setChannelList] = useState<Channel[]>([]);
+//   const [showAddChannel, setShowAddChannel] = useState(false);
+//   const [newChannelName, setNewChannelName] = useState('');
+//   const [isPrivateChannel, setIsPrivateChannel] = useState(false);
+//   const [channelPassword, setChannelPassword] = useState('');
+//   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
+//   const [searchQuery, setSearchQuery] = useState('');
+
+  
+//   const updateMessages = (updatedMessages: { [channelName: string]: string[] }) => {
+//   // Update the messages state directly
+//   setMessages({ ...updatedMessages });
+// };
+  
+  // const setMessages = (updatedMessages: { [channelName: string]: string[] }) => {
+  //   // Call the updateMessages function
+  //   updateMessages(updatedMessages);
+  // };
+  
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Chat.css';
 
 interface ChatProps {
   messages: { [channelName: string]: string[] };
+  setMessages: React.Dispatch<React.SetStateAction<{ [channelName: string]: string[] }>>;
 }
 
 interface Channel {
@@ -702,7 +739,7 @@ interface Channel {
   password?: string;
 }
 
-const Chat: React.FC<ChatProps> = ({ messages }) => {
+const Chat: React.FC<ChatProps> = ({ messages, setMessages }) => {
   const [newMessage, setNewMessage] = useState('');
   const [channelList, setChannelList] = useState<Channel[]>([]);
   const [showAddChannel, setShowAddChannel] = useState(false);
@@ -712,39 +749,26 @@ const Chat: React.FC<ChatProps> = ({ messages }) => {
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // const updateMessages = (updatedMessages: { [channelName: string]: string[] }) => {
-  //   // Update the messages state
-  //   setMessages({ ...updatedMessages });
-  // };
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // const setMessages = (updatedMessages: { [channelName: string]: string[] }) => {
-  //   // Update the messages state
-  //   updateMessages(updatedMessages);
-  // };
-  
+
   const updateMessages = (updatedMessages: { [channelName: string]: string[] }) => {
-    // Update the messages state directly
-    setMessages({ ...updatedMessages });
+    // Update the messages state
+    setMessages(updatedMessages);
   };
-  
-  const setMessages = (updatedMessages: { [channelName: string]: string[] }) => {
-    // Call the updateMessages function
-    updateMessages(updatedMessages);
-  };
-  
 
   const handleSend = () => {
-    if (newMessage.trim() !== '') {
-      if (selectedChannel) {
-        const updatedMessages = {
-          ...messages,
-          [selectedChannel.name]: [...(messages[selectedChannel.name] || []), newMessage],
-        };
-        setNewMessage('');
-        updateMessages(updatedMessages);
-      }
+  if (newMessage.trim() !== '') {
+    if (selectedChannel) {
+      const updatedMessages = {
+        ...messages,
+        [selectedChannel.name]: [...(messages[selectedChannel.name] || []), newMessage],
+      };
+      setNewMessage('');
+      updateMessages(updatedMessages); // Call the updateMessages function directly
     }
-  };
+  }
+};
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(event.target.value);
@@ -800,6 +824,12 @@ const Chat: React.FC<ChatProps> = ({ messages }) => {
     channel.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleLogout = () => {
+    // Perform logout logic here
+    // Set showLogoutModal to true to display the logout modal window
+    setShowLogoutModal(true);
+  };
+
   return (
     <div className="chat-container">
       <div className="chat-sidebar">
@@ -817,7 +847,7 @@ const Chat: React.FC<ChatProps> = ({ messages }) => {
             <Link to="/profile/users">Users</Link>
           </li>
           <li>
-            <Link to="/logout">Logout</Link>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
         <div className="search-line">
@@ -891,6 +921,18 @@ const Chat: React.FC<ChatProps> = ({ messages }) => {
         />
         <button onClick={handleSend}>Send</button>
       </div>
+      {showLogoutModal && (
+        <div className="logout-modal">
+          <div className="logout-modal-content">
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to logout?</p>
+            <div className="logout-modal-actions">
+              <button onClick={() => setShowLogoutModal(false)}>Cancel</button>
+              <button onClick={() => handleLogout()}>Logout</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

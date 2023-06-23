@@ -1,0 +1,41 @@
+.users-container {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.users-container h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.users-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.user-item:last-child {
+  margin-bottom: 0;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.user-email {
+  color: #888;
+}

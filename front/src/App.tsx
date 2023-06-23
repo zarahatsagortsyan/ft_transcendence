@@ -26,35 +26,7 @@
 
 // export default App;
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
-import Login from './pages/Login';
-import SetNick from './pages/SetNick';
-import Profile from './pages/Profile';
-import Chat from './pages/Chat';
-import Game from './pages/Game';
-
-function App() {
-  // Dummy chat messages for testing
-  const chatMessages: { [channelName: string]: string[] } = {};
-
-  return (
-    <Container>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/setnick" element={<SetNick />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/chat" element={<Chat messages={chatMessages} />} />
-        <Route path="/profile/game" element={<Game />} />
-      </Routes>
-    </Container>
-  );
-}
-
-export default App;
-
-
+// ------------------------------------------------------------
 
 // import React from 'react';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -127,3 +99,33 @@ export default App;
 // };
 
 // export default App;
+
+
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import Login from './pages/Login';
+import SetNick from './pages/SetNick';
+import Profile from './pages/Profile';
+import Chat from './pages/Chat';
+import Game from './pages/Game';
+import Users from './pages/Users';
+
+function App() {
+  const [chatMessages, setChatMessages] = useState<{ [channelName: string]: string[] }>({});
+
+  return (
+    <Container>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/setnick" element={<SetNick />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/chat" element={<Chat messages={chatMessages} setMessages={setChatMessages} />} />
+        <Route path="/profile/game" element={<Game />} />
+        <Route path="/profile/users" element={<Users />} /> {/* Add this line */}
+      </Routes>
+    </Container>
+  );
+}
+
+export default App;

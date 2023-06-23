@@ -199,6 +199,8 @@ const Profile: React.FC<ProfileProps> = () => {
   const [nickname, setNickname] = useState<string>(''); // State for nickname
   const [twoFactorAuth, setTwoFactorAuth] = useState<boolean>(false); // State for two-factor authentication
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleProfilePicChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Handle profile picture change logic
     const file = event.target.files?.[0];
@@ -232,6 +234,12 @@ const Profile: React.FC<ProfileProps> = () => {
     console.log('Profile updated:', { profilePic, name, nickname, twoFactorAuth });
   };
 
+  const handleLogout = () => {
+    // Perform logout logic here
+    // Set showLogoutModal to true to display the logout modal window
+    setShowLogoutModal(true);
+  };
+
   return (
     <div className="profile-page">
       <div className="side-menu">
@@ -249,7 +257,7 @@ const Profile: React.FC<ProfileProps> = () => {
             <Link to="/profile/users">Users</Link>
           </li>
           <li>
-            <Link to="/logout">Logout</Link>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
       </div>
@@ -297,6 +305,18 @@ const Profile: React.FC<ProfileProps> = () => {
           </div>
         </div>
       </div>
+      {showLogoutModal && (
+        <div className="logout-modal">
+          <div className="logout-modal-content">
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to logout?</p>
+            <div className="logout-modal-actions">
+              <button onClick={() => setShowLogoutModal(false)}>Cancel</button>
+              <button onClick={() => handleLogout()}>Logout</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
