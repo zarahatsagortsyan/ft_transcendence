@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
+import { GameController } from './game/controllers/game.controller';
+import { GameService } from './game/services/game.service';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -21,9 +24,10 @@ import { ChatModule } from './chat/chat.module';
 
       }),
     UserModule,
-    ChatModule,  
+    ChatModule,
+    GameModule,  
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, GameController],
+  providers: [AppService, GameService],
 })
 export class AppModule {}
