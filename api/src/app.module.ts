@@ -13,6 +13,7 @@ import { GameModule } from './game/game.module';
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot( {
+        name:'default',
         type: 'postgres',
         host: process.env.POSTGRES_HOST,
         port: parseInt(<string> process.env.POSTGRES_PORT),

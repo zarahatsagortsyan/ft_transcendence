@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, CreateDateColumn  } from "typeorm";
 import { User } from "./user.entity";
 
 export enum FriendStatus {
-    ONLINE = 'accepted',
-    OFFLINE = 'pending',
+    ISFRIEND = 'accepted',
+    FRPENDING = 'pending',
     // INGAME = 'in_game',
 }
 
@@ -12,20 +12,26 @@ export class Friendship {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => User)
+    @ManyToOne(type => User, (user) => user.id)
     @JoinColumn({ name: 'user_id' })
     user_id: number;
+
+    // @ManyToOne(type => User, (user) => user.id)
+    // // @Column()
+    // friend: User;
 
     @ManyToOne(type => User, (user) => user.id)
     @JoinColumn({ name: 'friend_id' })
     friend_id: number;
-
+    friend: User;
+    
     @Column({
         type: 'enum',
         enum: FriendStatus,
     })
-    friend_status: FriendStatus;
+    friend_status: string;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    @CreateDateColumn()
+   // @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: Date;
 }
