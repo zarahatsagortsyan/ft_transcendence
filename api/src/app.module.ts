@@ -28,7 +28,7 @@ import { GameService } from './game/services/game.service';
     ChatModule,
     GameModule,
   ],
-  controllers: [AppController, GameController],
-  providers: [AppService, GameService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
