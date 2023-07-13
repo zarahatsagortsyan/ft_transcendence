@@ -1,131 +1,111 @@
-// import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-// import { Routes, Route} from "react-router-dom"
-// import { Container } from 'react-bootstrap'
-// // import { Login } from "./pages/Login"
-// import Login from "./pages/Login"
-// import SetNick from "./pages/SetNick"
-// import Profile from "./pages/Profile"
-// import Chat from "./pages/Chat"
-// import Game from "./pages/Game"
+import { Outlet } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import { createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { INotifCxt, IUserStatus } from "./globals/Interfaces";
+import { TAlert } from "./toasts/TAlert";
+import { GameRequestCard } from "./routes/gameRequestCard";
+import { gameInvitation } from "./routes/chat_modes/type/chat.type";
 
+let LoginStatus = {
+  islogged: false,
+  setUserName: () => {},
+};
 
-// function App() {
-  
-//   return <Container>
-//     <Routes>
-//       <Route path="/" element={<Login />} />
-//       <Route path="/setnick" element={<SetNick />} />
-//       <Route path="/profile" element={<Profile />} />
-//       <Route path="/profile/chat" element={<Chat />} />
-//       <Route path="/profile/game" element={<Game />} />
-//     </Routes>
-//   </Container>
-// }
+export const UsernameCxt = createContext(LoginStatus);
 
-// export default App;
+export const UsersStatusCxt = createContext<IUserStatus[] | undefined>(
+  undefined
+);
 
-// ------------------------------------------------------------
+export const NotifCxt = createContext<INotifCxt | undefined>(undefined);
 
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { Container } from 'react-bootstrap';
-// import Login from './pages/Login';
-// import SetNick from './pages/SetNick';
-// import Profile from './pages/Profile';
-// import Chat from './pages/Chat';
-// import Game from './pages/Game';
+const socketOptions = {
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        Token: localStorage.getItem("userToken"),
+      },
+    },
+  },
+};
 
-// function App() {
-//   // Dummy chat messages for testing
-//   const chatMessages: string[] = [];
+export const socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, socketOptions);
 
-//   return (
-//     <Container>
-//       <Router>
-//         <Routes>
-//           <Route path="/" element={<Login />} />
-//           <Route path="/setnick" element={<SetNick />} />
-//           <Route path="/profile" element={<Profile />} />
-//           <Route path="/profile/chat" element={<Chat messages={chatMessages} />} />
-//           <Route path="/profile/game" element={<Game />} />
-//         </Routes>
-//       </Router>
-//     </Container>
-//   );
-// }
+export default function App() {
+  const [usersStatus, setUsersStatus] = useState<IUserStatus[] | undefined>(
+    undefined
+  );
+  const [notifShow, setNotifShow] = useState(false);
+  const [notifText, setNotifText] = useState("error");
+  const [gameRequest, setGameRequest] = useState(false);
+  const [gameInfo, setGameInfo] = useState<gameInvitation | undefined>(
+    undefined
+  );
 
-// export default App;
+  let userstatusTab: IUserStatus[] = [];
 
+  useEffect(() => {
+    socket.on("update-status", (data, str: string) => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      userstatusTab = [];
+      for (let i = 0; i <= data.length - 1; i++) {
+        let newUser: IUserStatus = {
+          key: data[i][0],
+          userModel: { id: 0, status: -1 },
+        };
+        newUser.userModel.id = data[i][0];
+        newUser.userModel.status = data[i][1];
+        userstatusTab.push(newUser);
+      }
+      setUsersStatus(userstatusTab);
+    });
+    // return () => {
+    //   socket.off('update-status')
+    // }
+  }, [usersStatus]);
 
-// import React, { useState, useEffect } from 'react';
+  useEffect(() => {
+    socket.on("game invitation", (game: gameInvitation) => {
+      setGameRequest(true);
+      setGameInfo(game);
 
-// interface User {
-//   id: number;
-//   name: string;
-//   email: string;
-// }
-
-// const App: React.FC = () => {
-//   const [users, setUsers] = useState<User[]>([]);
-
-//   useEffect(() => {
-//     fetchUsers();
-//   }, []);
-
-//   const fetchUsers = async () => {
-//     try {
-//       const response = await fetch('/api/users');
-//       const data = await response.json();
-//       setUsers(data);
-//     } catch (error) {
-//       console.error('Error fetching users:', error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Users</h1>
-//       <ul>
-//         {users.map(user => (
-//           <li key={user.id}>
-//             {user.name} - {user.email}
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default App;
-
-
-import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
-import Login from './pages/Login';
-import SetNick from './pages/SetNick';
-import Profile from './pages/Profile';
-import Chat from './pages/Chat';
-import Game from './pages/Game';
-import Users from './pages/Users';
-
-function App() {
-  const [chatMessages, setChatMessages] = useState<{ [channelName: string]: string[] }>({});
+      return () => {
+        socket.off("game invitation");
+      };
+    });
+  }, []);
 
   return (
-    <Container>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/setnick" element={<SetNick />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/chat" element={<Chat messages={chatMessages} setMessages={setChatMessages} />} />
-        <Route path="/profile/game" element={<Game />} />
-        <Route path="/profile/users" element={<Users />} /> {/* Add this line */}
-      </Routes>
-    </Container>
+    <div className="App">
+      <UsernameCxt.Provider value={LoginStatus}>
+        <UsersStatusCxt.Provider value={usersStatus}>
+          <NotifCxt.Provider value={{ setNotifShow, setNotifText }}>
+            <TAlert show={notifShow} setShow={setNotifShow} text={notifText} />
+            <Outlet />
+          </NotifCxt.Provider>
+          <div
+            className="card-disappear-click-zone"
+            style={{ display: gameRequest ? "" : "none" }}
+          >
+            <div
+              className="add-zone"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <GameRequestCard
+                game={gameInfo}
+                gameRequest={gameRequest}
+                onGameRequest={() => {
+                  setGameRequest((old) => {
+                    return !old;
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </UsersStatusCxt.Provider>
+      </UsernameCxt.Provider>
+    </div>
   );
 }
-
-export default App;
