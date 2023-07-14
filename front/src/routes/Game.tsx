@@ -1,10 +1,8 @@
 import React from 'react';
 import { io, Socket } from "socket.io-client";
-import "./Game.css";
-import { Game_data, Player, Coordinates, StatePong, Button, ButtonState, Msg, MsgState, PaddleProps, StatePaddle, SettingsProps, SettingsState, PropsPong } from './game.interfaces';
+import { Game_data, Player, Coordinates, StatePong, Button, ButtonState, Msg, MsgState, PaddleProps, StatePaddle, SettingsProps, SettingsState, PropsPong } from './InterfaceofGame';
 import FocusTrap from 'focus-trap-react';
-import { getUserAvatarQuery } from '../queries/avatarQueries';
-import SoloGame from './SoloGame';
+import { getUserAvatarQuery } from '../Queries/Avatar';
 import { socket as chatSocket } from '../App';
 import { Navigate } from 'react-router-dom';
 import { NotifCxt } from '../App';
@@ -219,7 +217,6 @@ export default class Game extends React.Component<PropsPong, StatePong> {
       buttonState: "Start",
       avatarP1URL: "",
       avatarP2URL: "",
-      soloGame: false,
       redirectChat: false,
     };
     if (this.props.pvtGame === false) 
@@ -228,7 +225,6 @@ export default class Game extends React.Component<PropsPong, StatePong> {
       this.socket = chatSocket;
     this.onSettingsKeyDown = this.onSettingsKeyDown.bind(this);
     this.onSettingsClickClose = this.onSettingsClickClose.bind(this);
-    this.quitSoloMode = this.quitSoloMode.bind(this);
   }
 
 
@@ -335,8 +331,6 @@ export default class Game extends React.Component<PropsPong, StatePong> {
     });
   };
 
-  soloButtonHandler = () => this.setState({ soloGame: true });
-
   keyDownInput = (e: KeyboardEvent) => {
     if (e.key === this.MOVE_UP && this.state.gameStarted) {
       e.preventDefault();
@@ -402,17 +396,11 @@ export default class Game extends React.Component<PropsPong, StatePong> {
     }
   };
 
-  quitSoloMode() {
-    this.setState({ soloGame: false });
-  }
-
   render() {
     const shoWInfo = this.state.gameStarted ? "flex" : "none";
-    /*const showBorder = this.state.gameStarted ? '2px solid rgb(0, 255, 255)' : '0px solid rgb(0, 255, 255)';*/
     const showBorder = this.state.gameStarted
       ? "2px solid rgb(255, 255, 255)"
       : "0px solid rgb(255, 255, 255)";
-    /*const showShadow = this.state.gameStarted ? '0px 0px 5px 5px rgb(80, 200, 255), inset 0px 0px 5px 5px rgb(0, 190, 255)' : '0';*/
     const showShadow = "0";
 
     var leftName = String(this.state.player1Name);
@@ -420,9 +408,7 @@ export default class Game extends React.Component<PropsPong, StatePong> {
 
     return (
       <div>
-        {this.state.soloGame ? (
-          <SoloGame clickHandler={this.quitSoloMode}></SoloGame>
-        ) : (
+        { (
           <div className="Radial-background">
             <div className="Page-top">
               <div style={{ display: `${shoWInfo}` }} className="Info-card">
@@ -513,11 +499,6 @@ export default class Game extends React.Component<PropsPong, StatePong> {
                 showButton={this.state.showStartButton}
                 clickHandler={this.startButtonHandler}
                 buttonText={this.state.buttonState}
-              />
-              <StartButton
-                showButton={this.state.showStartButton && this.state.buttonState !== "Cancel"}
-                clickHandler={this.soloButtonHandler}
-                buttonText="Solo mode"
               />
             </div>
             <div>

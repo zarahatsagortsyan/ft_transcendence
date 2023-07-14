@@ -13,9 +13,8 @@ export default function SignIn() {
       <h3 className="Auth-form-title">Sign in.</h3>
       <div className="text-secondary">
         Don't have an account yet? &nbsp;
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" onClick={handleClick}>
-          Sign up.
+        <a href="/signup" onClick={handleClick}>
+            Sign up.
         </a>
       </div>
     </div>

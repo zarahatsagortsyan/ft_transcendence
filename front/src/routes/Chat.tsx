@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import "./Chat.css";
-import Preview from "./chat_modes/chatPreview";
-import ChatRoom from "./chat_modes/chatRoom";
-import RoomStatus from "./chat_modes/roomStatus";
-import { chatPreview } from "./chat_modes/type/chat.type";
-import { NewRoomCard } from "./chat_modes/newRoomCard";
-import { SettingCard } from "./chat_modes/settingCard";
+import Preview from "./Chat/Preview";
+import ChatRoom from "./Chat/Channel";
+import RoomStatus from "./Chat/ChannelStatus";
+import { chatPreview } from "./Chat/TypeofChannel";
+import { NewRoomCard } from "./Chat/NewChannel";
+import { SettingCard } from "./Chat/Setting";
 import { NotifCxt } from "../App";
 import { socket } from "../App"
 

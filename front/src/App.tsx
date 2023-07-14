@@ -1,12 +1,13 @@
 import { Outlet } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { INotifCxt, IUserStatus } from "./globals/Interfaces";
-import { TAlert } from "./toasts/TAlert";
-import { GameRequestCard } from "./routes/gameRequestCard";
-import { gameInvitation } from "./routes/chat_modes/type/chat.type";
+import './App.css';
+import { TAlert } from "./Alert/Alert";
+import { INotifCxt, IUserStatus } from "./Globals/Interfaces";
+
+import { GameRequestCard } from "./Routes/Gamerequest";
+import { gameInvitation } from "./Routes/Chat/TypeofChannel";
 
 let LoginStatus = {
   islogged: false,
@@ -44,12 +45,27 @@ export default function App() {
     undefined
   );
 
-  let userstatusTab: IUserStatus[] = [];
+  // let userstatusTab: IUserStatus[] = [];
 
+  // useEffect(() => {
+  //   socket.on("update-status", (data, str: string) => {
+  //     userstatusTab = [];
+  //     for (let i = 0; i <= data.length - 1; i++) {
+  //       let newUser: IUserStatus = {
+  //         key: data[i][0],
+  //         userModel: { id: 0, status: -1 },
+  //       };
+  //       newUser.userModel.id = data[i][0];
+  //       newUser.userModel.status = data[i][1];
+  //       userstatusTab.push(newUser);
+  //     }
+  //     setUsersStatus(userstatusTab);
+  //   });
+  // }, [usersStatus]);
   useEffect(() => {
+    const userstatusTab: IUserStatus[] = []; // Define the type for userstatusTab
     socket.on("update-status", (data, str: string) => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      userstatusTab = [];
+      userstatusTab.length = 0; // Clear the array instead of creating a new one
       for (let i = 0; i <= data.length - 1; i++) {
         let newUser: IUserStatus = {
           key: data[i][0],
@@ -61,10 +77,9 @@ export default function App() {
       }
       setUsersStatus(userstatusTab);
     });
-    // return () => {
-    //   socket.off('update-status')
-    // }
   }, [usersStatus]);
+  
+  
 
   useEffect(() => {
     socket.on("game invitation", (game: gameInvitation) => {
@@ -109,3 +124,4 @@ export default function App() {
     </div>
   );
 }
+

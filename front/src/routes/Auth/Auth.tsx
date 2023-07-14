@@ -1,14 +1,12 @@
 import { useCallback, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Outlet } from "react-router-dom";
-import { IUserInfo } from "../../globals/Interfaces";
-import { signUp, signIn } from "../../queries/authQueries";
-import { GUserInputsRefs } from "../../globals/variables";
-import { useAuth } from "../../globals/contexts";
-import { getLeaderBoard, getUserData } from "../../queries/userQueries";
-import "./Auth.css";
+import { IUserInfo } from "../../Globals/Interfaces";
+import { GUserInputsRefs } from "../../Globals/Variables";
+import { useAuth } from "../../Globals/Contexts";
+import { signUp, signIn } from "../../Queries/Auth";
+import { getLeaderBoard, getUserData } from "../../Queries/User";
 import { NotifCxt } from "../../App";
 
 export default function Auth() {
@@ -18,7 +16,6 @@ export default function Auth() {
   let location = useLocation();
   const hrefURL = process.env.REACT_APP_BACKEND_URL + "/auth/42";
 
-  // Use a callback to avoid re-rendering
   const userSignIn = useCallback(() => {
     let username = localStorage.getItem("userName");
     console.log("username: ", username);
@@ -30,21 +27,16 @@ export default function Auth() {
     console.log("user is signed in");
   }, [navigate, auth]);
 
-  // useEffect to get access token from URL
   useEffect(() => {
-    // get access token from URL Query
     const access_token = location.search.split("=")[1];
     if (access_token) {
       console.log(access_token);
       localStorage.setItem("userToken", access_token);
-      // getUserData is a fetch that might take time. In order for sign in
-      // to operate after the function, it needs to use await, asyn and .then
-      // keywords. Otherwise, things might happen in the wrong order.
       const fetchData = async () => {
         const data = await getUserData();
         if (data === "error") {
           notif?.setNotifText(
-            "Unable to retrieve your informations. Please try again later!"
+            "Unable to retrieve your information. Please try again later!"
           );
         } else {
           await getLeaderBoard();
@@ -55,11 +47,10 @@ export default function Auth() {
         }
         notif?.setNotifShow(true);
       };
-      // sign in the user
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
+  }, [location.search, notif, userSignIn]);
+  
 
   const handleSubmit = (event: any) => {
     let userInfo: IUserInfo = {
@@ -111,16 +102,16 @@ export default function Auth() {
         <div className="Auth-form-content">
           <Outlet />
 
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <Form.Label className="form-test ">EMAIL</Form.Label>
             <Form.Control
               ref={GUserInputsRefs.email}
               type="email"
               placeholder="name@example.com"
             />
-          </Form.Group>
+          </Form.Group> */}
 
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <Form.Label className="form-test" htmlFor="inputPassword1">
               PASSWORD
             </Form.Label>
@@ -134,7 +125,7 @@ export default function Auth() {
             <Form.Text className="form-help-block" id="passwordHelpBlock" muted>
               Your password must be 8-32 characters long.
             </Form.Text>
-          </Form.Group>
+          </Form.Group> */}
           {/* USE LINK TO GET USER FROM 42 API */}
           <Button
             variant="secondary"
@@ -144,17 +135,14 @@ export default function Auth() {
           >
             Sign in with 42
           </Button>
-          <Button
+          {/* <Button
             variant="primary"
             type="submit"
             className="submit-button"
             size="sm"
           >
             Submit
-          </Button>
-          {/* <p className="text-secondary mt-2">
-            Forgot your &nbsp; <a href="#">password?</a>
-          </p> */}
+          </Button> */}
         </div>
       </form>
     </div>
