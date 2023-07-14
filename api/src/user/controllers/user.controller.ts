@@ -76,7 +76,7 @@ export class UserController {
         return this.userService.isFriend(user_id, friend_id);
     }
 
-    @Get('getPending')
+    @Get('getPending')  
     async getPending(@Query('user_id') user_id: number) {
         return this.userService.getPending(user_id);
     }
