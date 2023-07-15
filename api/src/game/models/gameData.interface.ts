@@ -6,7 +6,7 @@ export interface GameData {
 	player1Name: string;
 	player2Name: string;
 	player1Avatar: number;
-	player2Avater: number;
+	player2Avatar: number;
 	player1Score: number;
 	player2Score: number;
 	gameID?: number;
