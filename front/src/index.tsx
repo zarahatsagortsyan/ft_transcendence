@@ -5,13 +5,13 @@ import "./index.css";
 
 import Game from "./Routes/Game";
 import Auth from "./Routes/Auth/Auth";
-import SignIn from "./Routes/Auth/Signin";
+import SignIn from "./Routes/Auth/SignIn";
 import SignUp from "./Routes/Auth/SignUp";
 import Chat from "./Routes/Chat";
 import UserInterface from "./Routes/UserInterface";
 import { AuthProvider, RedirectWhenAuth, RequireAuth } from "./Hooks/Authorize";
 import TwoFAValidation from "./Routes/TwoFAQValidation";
-import LeaderBoard from "./Routes/Leaderboard";
+import LeaderBoard from "./Routes/LeaderBoard";
 import UserPrivateProfile from "./Routes/Profile/Private/PrivateProfile";
 import { BlockedList } from "./Routes/Profile/Private/Relations/Blocked";
 import { FriendsList } from "./Routes/Profile/Private/Relations/Friends";
