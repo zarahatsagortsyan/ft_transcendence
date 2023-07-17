@@ -21,15 +21,15 @@
 //   );
 // }
 
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
 
-  async function handleClick(event: any) {
-    event.preventDefault();
-    navigate("/auth/signup");
-  }
+  // async function handleClick(event: any) {
+  //   event.preventDefault();
+  //   navigate("/auth/signup");
+  // }
 
   const handle42SignUp = () => {
     window.location.href =
