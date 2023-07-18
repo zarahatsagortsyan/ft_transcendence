@@ -332,6 +332,13 @@ export class GameService {
         return game;
     }
 
+    async generate_new_id(): Promise<number> {
+		const id = Math.floor(Math.random() * 1_000_000 + 1);
+		const usedId = await this.testID(id);
+		if (!GameService.rooms.some((room) => room.id === id) && !usedId)
+			return id;
+		return this.generate_new_id();
+	}
     // async getLastGames() {
     //     //returns a record of all the users, ordered by endTime in descending order
     //     const games = await this.prisma.game.findMany({
