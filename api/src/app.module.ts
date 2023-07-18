@@ -8,6 +8,9 @@ import { ChatModule } from './chat/chat.module';
 import { GameController } from './game/controllers/game.controller';
 import { GameModule } from './game/game.module';
 import { GameService } from './game/services/game.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +30,7 @@ import { GameService } from './game/services/game.service';
     UserModule,
     ChatModule,
     GameModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
