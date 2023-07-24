@@ -11,6 +11,8 @@ import { GameService } from './game/services/game.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { AppGateway } from './app.gateway';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -31,8 +33,10 @@ import { AuthModule } from './auth/auth.module';
     ChatModule,
     GameModule,
     AuthModule,
+    JwtModule.register({ secret: process.env.JWT_SECRET }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],  ////added AppGateway
+  exports: [AppGateway],  ////added this line
 })
 export class AppModule {}

@@ -15,5 +15,6 @@ import { Friendship } from './models/friendship.entity';
     ],
   providers: [UserService],
   controllers: [UserController],
+  exports: [UserService], //added this line 
 })
 export class UserModule {}

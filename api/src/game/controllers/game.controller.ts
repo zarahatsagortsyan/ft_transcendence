@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { GameService } from '../services/game.service';
 import { IGame } from '../models/game.interface';
 import { Observable } from 'rxjs';
@@ -10,5 +10,10 @@ export class GameController {
     @Post()
     create(@Body('') game: IGame) : Observable<IGame> {
         return this.gameService.createGame(game);
+    }
+
+    @Get('get_game')
+    getGame(@Body('otherID') otherID: number) {
+        return this.gameService.getGame(otherID)
     }
 }
