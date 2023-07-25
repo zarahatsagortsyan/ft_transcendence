@@ -86,10 +86,8 @@ export class GameService {
                     .id,
                 game_data.player1Score,
                 game_data.player2Score,
-                // game_data.startTime,
-                // endTime,
             );
-            // delete the room
+            // delete room
             GameService.rooms.splice(GameService.rooms.findIndex((room) => room.id === id), 1,);
         }
         release()
@@ -236,16 +234,9 @@ export class GameService {
 
     //// updatePaddles
     updatePaddles(roomID: number) {
-        if (
-            GameService.rooms.find((room) => room.id === roomID)
-                .paddleLeftDir == 1
-        ) {
-            GameService.rooms.find((room) => room.id === roomID).paddleLeft -=
-                paddleSpeed;
-            if (
-                GameService.rooms.find((room) => room.id === roomID)
-                    .paddleLeft < 0
-            )
+        if (GameService.rooms.find((room) => room.id === roomID).paddleLeftDir == 1) {
+            GameService.rooms.find((room) => room.id === roomID).paddleLeft -= paddleSpeed;
+            if (GameService.rooms.find((room) => room.id === roomID).paddleLeft < 0)
                 GameService.rooms.find(
                     (room) => room.id === roomID,
                 ).paddleLeft = 0;
@@ -301,6 +292,15 @@ export class GameService {
     }
 
     async saveGame(id: number, user1ID: number, user2ID: number, score1: number, score2: number) {
+        const game: IGame = {
+            id: id,
+            player1: user1ID,
+            player2: user2ID,
+            score1: score1,
+            score2: score2,
+        };
+        await from(this.gameRepository.save(game));
+
         
     }
 
@@ -333,12 +333,12 @@ export class GameService {
     }
 
     async generate_new_id(): Promise<number> {
-		const id = Math.floor(Math.random() * 1_000_000 + 1);
-		const usedId = await this.testID(id);
-		if (!GameService.rooms.some((room) => room.id === id) && !usedId)
-			return id;
-		return this.generate_new_id();
-	}
+        const id = Math.floor(Math.random() * 1_000_000 + 1);
+        const usedId = await this.testID(id);
+        if (!GameService.rooms.some((room) => room.id === id) && !usedId)
+            return id;
+        return this.generate_new_id();
+    }
     // async getLastGames() {
     //     //returns a record of all the users, ordered by endTime in descending order
     //     const games = await this.prisma.game.findMany({
