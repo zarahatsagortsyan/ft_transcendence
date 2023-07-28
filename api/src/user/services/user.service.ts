@@ -47,10 +47,33 @@ export class UserService {
                 throw new ForbiddenException('getUser error: ' + error);
             }
         }
+        async getUserByUsername(username: string)
+        {
+            if (username === undefined)
+            {
+                throw new BadRequestException('Undefigned username');
+            }
 
+            try{
+                const user = await this.userRepository.findOne({
+                    where: {
+                        user_name: username,
+                    },
+                });
+                return user;
+
+            } 
+            catch (error){
+                throw new ForbiddenException('getUser error: ' + error);
+            }
+        }
         //login create user
         createUser(user: IUser): Observable<User> {
             return from(this.userRepository.save(user));
+        }
+
+        createUserPromise(user: IUser): Promise<User> {
+            return this.userRepository.save(user);
         }
         
         //USER PROFILE RELATED FUNCTIONS

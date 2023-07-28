@@ -17,6 +17,11 @@ export class UserController {
         return this.userService.createUser(user)
     }
 
+    @Post('createUserPromise')
+    createUserPromise(@Body('') user: IUser): Promise<IUser> {
+        return this.userService.createUserPromise(user)
+    }
+
     @Post('blockUser')
     blockUser(@Body('') block: IBlocked): Observable<IBlocked> {
         return this.userService.blockUser(block)
@@ -31,6 +36,11 @@ export class UserController {
     async getUser(@Query('user_id') user_id: number){
       return await this.userService.getUser(user_id)
     }
+
+    // @Get('getUserByUsername')
+    // async getUserByUsername(@Query('username') user_id: number){
+    //   return await this.userService.getUser(user_id)
+    // }
 
     @Get('getAllUsers')
     async getAllUsers(){
