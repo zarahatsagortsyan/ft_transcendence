@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { User } from '../models/user.entity';
+import { User, UserStatus } from '../models/user.entity';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { IUser } from '../models/user.interface';
 import { Observable, Subject, from } from 'rxjs';
@@ -9,6 +9,7 @@ import { FriendStatus, Friendship } from '../models/friendship.entity';
 import { Blocked } from '../models/blocked.entity';
 import { Equal, FindManyOptions, Repository, createQueryBuilder } from 'typeorm';
 import { Logger } from '@nestjs/common';
+import { AuthUserDto } from 'src/auth/dto/auth.dto';
 @Injectable()
 export class UserService {
     logger = new Logger('AppController');
@@ -72,7 +73,14 @@ export class UserService {
             return from(this.userRepository.save(user));
         }
 
-        createUserPromise(user: IUser): Promise<User> {
+        createUserPromise(u: AuthUserDto): Promise<User> {
+            const user:IUser=  {
+                user_name: u.user_name,
+                nick_name: "",
+                avatar: u.avatar,
+                user_status : UserStatus.ONLINE,
+                two_factor_auth : false,
+            };
             return this.userRepository.save(user);
         }
         
@@ -322,5 +330,13 @@ export class UserService {
             await this.friendshipRepository.delete(existingFriendship1.id);
 
             return true;
+        }
+
+        // async updateAccessToken(id: number, atoken: string) {                   //Do we really need it????????
+        //     await this.userRepository.update(id, {access_token: atoken});
+        // }
+
+        async updateRefreshToken(id: number, rtoken: string) {
+            await this.userRepository.update(id, {refresh_token: rtoken});
         }
 }

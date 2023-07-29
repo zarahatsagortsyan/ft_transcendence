@@ -17,10 +17,10 @@ export class UserController {
         return this.userService.createUser(user)
     }
 
-    @Post('createUserPromise')
-    createUserPromise(@Body('') user: IUser): Promise<IUser> {
-        return this.userService.createUserPromise(user)
-    }
+    // @Post('createUserPromise')
+    // createUserPromise(@Body('') user: IUser): Promise<IUser> {
+    //     return this.userService.createUserPromise(user)
+    // }
 
     @Post('blockUser')
     blockUser(@Body('') block: IBlocked): Observable<IBlocked> {

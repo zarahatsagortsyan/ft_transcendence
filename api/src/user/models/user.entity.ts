@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable,Unique } from "typeorm";
+import { IsNotEmpty, IsString, IsNumber, MaxLength } from 'class-validator';
 
 export enum UserStatus {
     ONLINE = 'online',
@@ -17,7 +18,10 @@ export class User {
     @Column()
     nick_name: string;
 
-    @Column({ default: 'default.jpg' })
+    @Column()
+    @IsString()
+	@IsNotEmpty()
+	@MaxLength(65_000)
     avatar: string;
 
     // @Column({ default: '' })
@@ -34,4 +38,10 @@ export class User {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: Date;
+
+    @Column({ default: 'null' })
+    refresh_token: string;
+
+    // @Column()
+    // access_token: string;
 }

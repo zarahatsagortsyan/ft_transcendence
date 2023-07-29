@@ -31,21 +31,8 @@ export class AuthUserDto {
 	@IsString()
 	@IsNotEmpty()
 	user_name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	nick_name: string;
 	
 	@IsString()
 	@IsNotEmpty()
 	avatar: string;
-
-	@IsString()
-	@IsNotEmpty()
-	user_status: UserStatus;
-	
-	@IsBoolean()
-	@IsNotEmpty()
-	two_factor_auth: boolean;
-
 }

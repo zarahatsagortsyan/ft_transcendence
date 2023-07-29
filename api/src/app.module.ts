@@ -32,7 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     ChatModule,
     GameModule,
-    // AuthModule,
+    AuthModule,
     JwtModule.register({ secret: process.env.JWT_SECRET }),
   ],
   controllers: [AppController],
