@@ -32,6 +32,12 @@ export class UserController {
       return await this.userService.getUser(user_id)
     }
 
+    @Get('getUserByEmail')
+    async getUserByEmail(@Query('email') email: string){
+      return await this.userService.getUserByEmail(email)
+    }
+
+
     @Get('getAllUsers')
     async getAllUsers(){
       return await this.userService.getAllUsers()

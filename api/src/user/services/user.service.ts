@@ -48,6 +48,22 @@ export class UserService {
             }
         }
 
+        async getUserByEmail(email: string)
+        {
+            try{
+                const user = await this.userRepository.findOne({
+                    where: {
+                        // user_email: email,
+                    },
+                });
+                return user;
+
+            } 
+            catch (error){
+                throw new ForbiddenException('getUser error: ' + error);
+            }
+        }
+
         //login create user
         createUser(user: IUser): Observable<User> {
             return from(this.userRepository.save(user));

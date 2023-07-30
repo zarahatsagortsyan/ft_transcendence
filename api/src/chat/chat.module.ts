@@ -15,10 +15,10 @@ import { MessageService } from './services/message.service';
     TypeOrmModule.forFeature([Chat]),
     TypeOrmModule.forFeature([Message]),
     TypeOrmModule.forFeature([Chat_Membership]),
-
     UserModule,
   ],
   controllers: [ChatController, MessageController],
-  providers: [ChatService, MessageService]
+  providers: [ChatService, MessageService],
+  exports: [ChatService]
 })
 export class ChatModule {}
