@@ -7,8 +7,8 @@ const configg :TypeOrmModuleOptions=
 {
     type : 'postgres',
     host : process.env.POSTGRES_HOST,
-    port : parseInt(process.env.POSTGRES_HOST),
-    database : process.env.POSTGRES_DBATABASE as string,
+    port : parseInt(process.env.POSTGRES_PORT),
+    database : process.env.POSTGRES_DB as string,
     username : process.env.POSTGRES_USE,
     password : process.env.POSTGRES_PASSWORD as string,
     autoLoadEntities: true,
