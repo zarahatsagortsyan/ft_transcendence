@@ -58,9 +58,9 @@ function Login() {
       <div className="logo-container">
         <img src={myImage} alt="Logo" className="logo" />
       </div>
-      <Button onClick={handleLogin} className="login-button">
-        Login
-      </Button>
+        <Button onClick={handleLogin} className="login-button">
+          Login
+        </Button>
     </Container>
   );
 }
