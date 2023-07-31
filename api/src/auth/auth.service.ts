@@ -59,8 +59,8 @@ export class AuthService {
 		return res;
     }
 
-    async signin_jwt(user_name: string, id: number):Promise<AuthTokenDto>{
-        const login_data = {sub: id, user_name};
+    async signin_jwt(user_name: string, id: number, two_factor_auth = false):Promise<AuthTokenDto>{
+        const login_data = {sub: id, user_name, two_factor_auth};
 
         const atoken = await this.jwtService.signAsync(login_data, {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,

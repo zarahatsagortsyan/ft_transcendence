@@ -80,6 +80,7 @@ export class UserService {
                 avatar: u.avatar,
                 user_status : UserStatus.ONLINE,
                 two_factor_auth : false,
+                two_factor_secret : '',
             };
             return this.userRepository.save(user);
         }

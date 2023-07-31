@@ -7,6 +7,7 @@ export interface IUser {
     avatar?: string;
     user_status : UserStatus;
     two_factor_auth : boolean;
+    two_factor_secret: string;
     refresh_token?: string;
     // access_token: string
         

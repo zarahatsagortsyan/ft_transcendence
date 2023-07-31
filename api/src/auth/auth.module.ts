@@ -8,6 +8,8 @@ import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { FortyTwoStrategy } from './strategies/42.strategy';
+import { TwoFaService } from './2fa/2fa.service';
+import { TwoFAController } from './2fa/2fa.controller';
 
 @Module({
     imports: [
@@ -18,8 +20,8 @@ import { FortyTwoStrategy } from './strategies/42.strategy';
 		// forwardRef(() => UploadModule),
 		forwardRef(() => HttpModule),
     ],
-    controllers: [AuthController],
-    providers: [AuthService, FortyTwoStrategy],
+    controllers: [AuthController, TwoFAController],
+    providers: [AuthService, FortyTwoStrategy, TwoFaService],
     exports: [AuthService],
 })
 export class AuthModule {}

@@ -36,3 +36,25 @@ export class AuthUserDto {
 	@IsNotEmpty()
 	avatar: string;
 }
+
+export class TwoFaDto {
+	@IsNumber()
+	@IsNotEmpty()
+	id: number;
+
+	// @IsEmail()
+	// @IsNotEmpty()
+	// email: string;
+
+	@IsString()
+	@IsNotEmpty()
+	user_name: string;
+	
+	@IsNotEmpty()
+	@IsString()
+	twoFacode: string;
+
+	@IsNotEmpty()
+	@IsString()
+	twoFasecret: string;
+}

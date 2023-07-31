@@ -36,6 +36,9 @@ export class User {
     @Column({ default: false })
     two_factor_auth: boolean;
 
+    @Column({ default: 'null' })
+    two_factor_secret: string;
+
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: Date;
 
