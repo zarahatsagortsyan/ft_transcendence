@@ -41,7 +41,7 @@ export class TwoFaService {
 		// If invalid, throw error 401
 		if (!isValid) throw new UnauthorizedException('Invalid 2FA code');
 
-
+		this.userService.updatetwoFa(user_name, true);
         // await this.userRepository.update(user_name, {two_factor_auth: true} );
 
 		// Enable 2FA for user (add method to user module ?)
@@ -61,9 +61,8 @@ export class TwoFaService {
 		// });
 
 
+		this.userService.updatetwoFa(user_name, true);
         // this.userRepository.update(user_name, {two_factor_auth: true} );
-
-
 
 		const tokens = await this.authservice.signin_jwt(user_name, id);
 		return tokens;
@@ -92,6 +91,7 @@ export class TwoFaService {
 		// });
 
 
+		this.userService.updatetwoFaSecret(user_name, secret);
         // await this.userRepository.update(user_name, {two_factor_secret: secret})
 
 

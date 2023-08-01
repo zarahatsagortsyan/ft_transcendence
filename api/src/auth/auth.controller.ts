@@ -17,6 +17,8 @@ import { AuthUserDto } from './dto/auth.dto';
 import { IUser } from 'src/user/models/user.interface';
 import { RedirectOnLogin } from './filter/redirect';
 import { TwoFaService } from './2fa/2fa.service';
+import { GetCurrentUser } from 'src/decorator/get-current-user-decorator';
+import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
 
 
 @Controller('auth')
@@ -39,5 +41,26 @@ export class AuthController {
 		return two_factor_auth ? this.twofaService.signin_2fa(res, user_name) :
 			this.authService.signin42_token(res, user_name, id);
 		// return this.authService.signin42_token(res, user_name, id);
+	}
+
+	@Post('logout')
+	@HttpCode(200)
+	// @ApiResponse({ status: 401, description: 'Unauthorized' })
+	logout(
+		@GetCurrentUser('user_name') user_name: string,
+	) {
+		return this.authService.signout(user_name);
+	}
+
+	// @Public()
+	// @UseGuards(RtGuard)
+	@HttpCode(200)
+	@Post('/refresh')
+	refresh(
+		// @GetCurrentUserId() userId: number,
+		@GetCurrentUser('user_name') user_name:string,
+		@GetCurrentUser('refreshToken') refreshToken: string,
+	) {
+		return this.authService.refresh_token(user_name, refreshToken);
 	}
 }

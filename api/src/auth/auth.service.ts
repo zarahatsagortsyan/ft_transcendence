@@ -49,7 +49,9 @@ export class AuthService {
     async signin42_token(@Res() res : Response, user_name: string, id: number) : Promise<Response> {
         const tokens = await this.signin_jwt(user_name, id);
 
-		await this.updateRefreshToken(id, tokens.refresh_token);
+		// await this.updateRefreshToken(id, tokens.refresh_token);
+		await this.updateRefreshToken(user_name, tokens.refresh_token);
+
         const url = new URL(process.env.SITE_NAME)
         url.port = process.env.FRONT_PORT;
 		url.pathname = '/auth';
@@ -78,9 +80,50 @@ export class AuthService {
 		};
     }
 
-    async updateRefreshToken(id: number, rtoken: string) //maybe Promise<void>
+    // async updateRefreshToken(id: number, rtoken: string) //maybe Promise<void>
+    // {
+    //     const hash = await argon.hash(rtoken);
+    //     this.userService.updateRefreshToken(id, hash);
+    // }
+
+    async updateRefreshToken(user_name: string, rtoken: string) //maybe Promise<void>
     {
         const hash = await argon.hash(rtoken);
-        this.userService.updateRefreshToken(id, hash);
+        this.userService.updateRefreshToken(user_name, hash);
+    }
+
+    async signout(user_name: string){
+		// delete refresh token (log out)
+        this.userService.updateRefreshToken(user_name, '') //had to be null?
+		// await this.prisma.user.updateMany({
+		// 	where: {
+		// 		id: userId,
+		// 		hashedRtoken: {
+		// 			// eslint-disable-next-line unicorn/no-null
+		// 			not: null,
+		// 		},
+		// 	},
+		// 	data: {
+		// 		// eslint-disable-next-line unicorn/no-null
+		// 		hashedRtoken: null,
+		// 	},
+		// });
+		//sending status update to the front
+		this.appGateway.offlineFromService((await this.userService.getUserByUsername(user_name)).id);
+	}
+
+    async refresh_token(user_name: string, rtoken: string) : Promise<AuthTokenDto>
+    {
+        const user = await this.userService.getUserByUsername(user_name);
+
+        if (!user || !user.refresh_token)
+            throw new ForbiddenException("Invalid credentials");
+        
+        const validated = await argon.verify(user.refresh_token, rtoken);
+        if (!validated)
+            throw new ForbiddenException('Invlaid credentials');
+        const tokens = await this.signin_jwt(user_name, user.id, user.two_factor_auth);
+        await this.updateRefreshToken(user_name, tokens.refresh_token);
+        return tokens;
     }
 }
