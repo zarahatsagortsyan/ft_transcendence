@@ -337,7 +337,19 @@ export class UserService {
         //     await this.userRepository.update(id, {access_token: atoken});
         // }
 
-        async updateRefreshToken(id: number, rtoken: string) {
-            await this.userRepository.update(id, {refresh_token: rtoken});
+        // async updateRefreshToken(id: number, rtoken: string) {
+        //     await this.userRepository.update(id, {refresh_token: rtoken});
+        // }
+
+        async updateRefreshToken(user_name: string, rtoken: string) {
+            await this.userRepository.update(user_name, {refresh_token: rtoken});
+        }
+
+        async updatetwoFa(user_name: string, twoFa: boolean) {
+            await this.userRepository.update(user_name, {two_factor_auth: twoFa});
+        }
+
+        async updatetwoFaSecret(user_name: string, secret: string) {
+            await this.userRepository.update(user_name, {two_factor_secret: secret});
         }
 }
