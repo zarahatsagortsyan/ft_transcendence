@@ -2,21 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { socket } from "../../App"
 import { newChannel } from "./TypeofChannel";
 import "react-contexify/dist/ReactContexify.css";
-import Switch from "react-switch";
-import ReactTags, { Tag } from "react-tag-autocomplete";
-import { matchSorter } from "match-sorter";
+// import Switch from 'react-switch';
+// import {Tag} from "./TypeofChannel";
+import {ReactTags, TagSuggestion} from "react-tag-autocomplete";
+// import { matchSorter } from "match-sorter";
 
 export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
     : { newRoomRequest: boolean,
         onNewRoomRequest: () => void,
         updateStatus: number}) {
     const email = localStorage.getItem("userEmail");
-    const [userTag, setUserTag] = useState<Tag[]>([]);
+    const [userTag, setUserTag] = useState<TagSuggestion[]>([]);
     const [roomName, setRoomName] = useState("");
     const [roomPass, setRoomPass] = useState("");
     const [isPrivate, setPrivate] = useState(false);
     const [isPassword, setIsPassword] = useState(false);
-    const [addedMember, setAddMember] = useState<Tag[]>([]);
+    const [addedMember, setAddMember] = useState<TagSuggestion[]>([]);
     const scroll = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -31,7 +32,7 @@ export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
             initVars();
 
         socket.emit("get user tags", email);
-        socket.on("user tags", (data: Tag[]) => {
+        socket.on("user tags", (data: TagSuggestion[]) => {
             setUserTag(data);
         })
 
@@ -41,9 +42,9 @@ export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [newRoomRequest])
 
-    const onAddMember = (member: Tag) => {
+    const onAddMember = (member: TagSuggestion) => {
         const members = addedMember.concat(member)
-        setAddMember(members);
+        setAddMember((members));
     }
 
     const onDeleteMember = (i: number) => {
@@ -52,21 +53,21 @@ export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
         setAddMember(members);
     }
 
-    const suggestionsFilter = (searching: string, suggestions: Tag[]) => {
-        return matchSorter(suggestions, searching, { keys: ["name"] });
-    }
+    // const suggestionsFilter = (searching: string, suggestions: Tag[]) => {
+    //     return matchSorter(suggestions, searching, { keys: ["name"] });
+    // }
 
     const handleString = (value: string, setValue: (value: string) => void) => {
         setValue(value);
     }
 
-    const handlePrivate = () => {
-        setPrivate(old => {return !old});
-    }
+    // const handlePrivate = () => {
+    //     setPrivate(old => {return !old});
+    // }
 
-    const handleIsPassword = () => {
-        setIsPassword(old => {return !old});
-    }
+    // const handleIsPassword = () => {
+    //     setIsPassword(old => {return !old});
+    // }
 
     const onCreate = () => {
         let data: newChannel = {
@@ -113,20 +114,22 @@ export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
           />
           <div className="browse-users" ref={scroll}>
             <ReactTags
-              tags={addedMember}
+              // tags={addedMember}
               suggestions={userTag.filter((v) => {
                 return (
                   addedMember.filter((v1) => {
-                    return v1.id === v.id;
+                    return v1.value === v.value;
                   }).length === 0
                 );
               })}
+              // suggestions={addedMember}
+              selected={addedMember}
               placeholderText="MEMBERS"
-              onAddition={onAddMember}
+              onAdd={onAddMember}
               onDelete={onDeleteMember}
               onInput={autoScroll}
-              suggestionsTransform={suggestionsFilter}
-              noSuggestionsText="user not found"
+              //suggestionsTransform={suggestionsFilter}
+              noOptionsText="user not found"
             />
           </div>
         </div>
@@ -134,25 +137,25 @@ export function NewRoomCard({newRoomRequest, onNewRoomRequest, updateStatus}
           <label style={{ color: isPrivate ? "rgb(0,136,0)" : "grey" }}>
             private
           </label>
-          <Switch
+          {/* <Switch
             className="switch"
             onChange={handlePrivate}
             checked={isPrivate}
             checkedIcon={false}
             uncheckedIcon={false}
-          />
+          /> */}
         </div>
         <div className="div-switch">
           <label style={{ color: isPassword ? "rgb(0,136,0)" : "grey" }}>
             password
           </label>
-          <Switch
+          {/* <Switch
             className="switch"
             onChange={handleIsPassword}
             checked={isPassword}
             checkedIcon={false}
             uncheckedIcon={false}
-          />
+          /> */}
         </div>
         <div style={{ display: isPassword ? "" : "none" }}>
           <input

@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { 
-    chatPreview, 
-    gameInvitation, 
-    mute, 
-    oneUser, 
-    Tag, 
-    updateChannel, 
+import {
+    chatPreview,
+    gameInvitation,
+    mute,
+    oneUser,
+    // Tag,
+    updateChannel,
     updateUser
 } from "./TypeofChannel";
 import {
@@ -16,41 +16,45 @@ import {
     Submenu,
 } from "react-contexify";
 import { AddUserIcon, QuitIcon } from "./Icon";
-import ReactTags from 'react-tag-autocomplete';
+import {  TagSuggestion } from 'react-tag-autocomplete';
 import { socket } from "../../App"
 import { getUserAvatarQuery } from "../../Queries/Avatar";
 import { Player } from "../InterfaceofGame";
 import { useNavigate } from "react-router-dom";
 import { UsersStatusCxt } from "../../App";
 import { IUserStatus } from "../../Globals/Interfaces";
+import {  ReactTags } from 'react-tag-autocomplete';
+
 
 declare var global: {
     selectedUser: oneUser
     onlineStatus: number | undefined
 }
 
-export default function RoomStatus({current, role, outsider, updateStatus, blockedList}
-    : { current: chatPreview | undefined,
+export default function RoomStatus({ current, role, outsider, updateStatus, blockedList }
+    : {
+        current: chatPreview | undefined,
         role: string,
         outsider: boolean | undefined,
         updateStatus: number,
-        blockedList: []}) {
+        blockedList: []
+    }) {
 
     const [add, setAdd] = useState<boolean>(false);
-    const [invitationTag, setTag] = useState<Tag[]>([]);
- 
+    const [invitationTag, setTag] = useState<TagSuggestion[]>([]);
+    const [addedTags, setAddedTags] = useState<TagSuggestion[]>([]);
+
     const email = localStorage.getItem("userEmail");
 
     useEffect(() => {
-        if (current)
-        {
-            socket.emit("read room status", {channelId: current?.id, email: email});
+        if (current) {
+            socket.emit("read room status", { channelId: current?.id, email: email });
             socket.emit("get invitation tags", current?.id);
         }
     }, [updateStatus, current, email])
 
     useEffect(() => {
-        socket.on("invitation tags", (data: Tag[]) => {
+        socket.on("invitation tags", (data: TagSuggestion[]) => {
             setTag(data);
         })
 
@@ -60,77 +64,85 @@ export default function RoomStatus({current, role, outsider, updateStatus, block
 
     }, [current, email])
 
-    const handleInvite = (member: Tag) => {
-        setAdd(false);
-        let update: updateChannel = {
-            channelId: current!.id,
-            email: email,
-            password: "",
-            targetId: member.id,
-            private: false,
-            isPassword: false,
-            newPassword: "",
-            dm: false
-        }
-        socket.emit("invite to channel", update, () => {
-            socket.emit('fetch new invite');
-        });
+    // const handleInvite = (member: Tag) => {
+    //     setAdd(false);
+    //     let update: updateChannel = {
+    //         channelId: current!.id,
+    //         email: email,
+    //         password: "",
+    //         targetId: member.id,
+    //         private: false,
+    //         isPassword: false,
+    //         newPassword: "",
+    //         dm: false
+    //     }
+    //     socket.emit("invite to channel", update, () => {
+    //         socket.emit('fetch new invite');
+    //     });
+    // }
+
+    const onDelete = (i: number) => { }
+
+    const onAdd = (newTag: TagSuggestion) => {
+        setAddedTags(prevAddedTags => ([...prevAddedTags, newTag]))
     }
 
-    const onDelete = (i: number) => {}
-
-    return(
+    return (
         <div className="chat-status-zone">
             <div className="status-top">
-                { current ?
+                {current ?
                     add ?
-                        <div className="add-box">
+                        (<div className="add-box">
                             <ReactTags
-                                tags={[]}
+                                selected={addedTags}
                                 suggestions={invitationTag}
                                 placeholderText="invite to chat"
-                                noSuggestionsText="user not found"
-                                onAddition={handleInvite}
+                                noOptionsText="User is not found"
+                                // onAddition={handleInvite}
                                 onDelete={onDelete}
-                                autofocus={true}
+                                // autofocus={true}
+                                onAdd={onAdd}
                                 onBlur={() => {
                                     setAdd(false);
                                 }}
                             />
                             <QuitIcon onClick={() => {
-                                setAdd(false) }}/>
-                        </div> :
-                        <>
+                                setAdd(false)
+                            }} />
+                        </div>) :
+                        (<>
                             <AddUserIcon onClick={() => {
                                 setAdd(true);
-                            }}/>
-                        </>
+                            }} />
+                        </>)
                     : <></>
                 }
             </div>
             <MemberStatus
                 current={current}
                 role={role}
-                blockedList={blockedList}/>
+                blockedList={blockedList} />
             <JoinChannel
                 channelId={current?.id}
                 outsider={outsider}
-                isPassword={current?.isPassword}/>
+                isPassword={current?.isPassword} />
         </div>
     )
 }
 
-function MemberStatus({current, role, blockedList}
-    : { current: chatPreview | undefined,
+function MemberStatus({ current, role, blockedList }
+    : {
+        current: chatPreview | undefined,
         role: string,
-        blockedList: []}) {
+        blockedList: []
+    }) {
 
     const [owner, setOwner] = useState<oneUser[] | null>([]);
     const [admins, setAdmins] = useState<oneUser[] | null>([]);
     const [members, setMembers] = useState<oneUser[] | null>([]);
     const [inviteds, setInviteds] = useState<oneUser[] | null>([]);
-    
-    useEffect( () => {
+
+    useEffect(() => {
 
         socket.on("fetch owner", (data: oneUser[] | null) => {
             setOwner(data);
@@ -154,45 +166,47 @@ function MemberStatus({current, role, blockedList}
             socket.off("fetch members");
             socket.off("fetch inviteds");
         })
-        
+
     }, [current])
 
     return (
         <div className="member-status">
-            <p 
+            <p
                 className="status-type"
-                style={{display: owner?.length ? "" : "none"}}>
+                style={{ display: owner?.length ? "" : "none" }}>
                 OWNER
             </p>
-            <Status users={owner} current={current} role={role} blockedList={blockedList}/>
-            <p 
+            <Status users={owner} current={current} role={role} blockedList={blockedList} />
+            <p
                 className="status-type"
-                style={{display: admins?.length ? "" : "none"}}>
+                style={{ display: admins?.length ? "" : "none" }}>
                 ADMINS
             </p>
-            <Status users={admins} current={current} role={role} blockedList={blockedList}/>
+            <Status users={admins} current={current} role={role} blockedList={blockedList} />
             <p
                 className="status-type"
-                style={{display: members?.length ? "" : "none"}}>
+                style={{ display: members?.length ? "" : "none" }}>
                 MEMBERS
             </p>
-            <Status users={members} current={current} role={role} blockedList={blockedList}/>
+            <Status users={members} current={current} role={role} blockedList={blockedList} />
             <p
                 className="status-type"
-                style={{display: inviteds?.length ? "" : "none"}}>
+                style={{ display: inviteds?.length ? "" : "none" }}>
                 Invited Users
             </p>
-            <Status users={inviteds} current={current} role={role} blockedList={blockedList}/>
+            <Status users={inviteds} current={current} role={role} blockedList={blockedList} />
         </div>
     )
 }
 
-function Status({users, current, role, blockedList}
-    : { users: oneUser[] | null,
+function Status({ users, current, role, blockedList }
+    : {
+        users: oneUser[] | null,
         current: chatPreview | undefined,
         role: string,
-        blockedList: []}) {
-    
+        blockedList: []
+    }) {
+
     const email = localStorage.getItem("userEmail");
     const [selData, setSelData] = useState<any>(null);
     const { show } = useContextMenu();
@@ -202,17 +216,16 @@ function Status({users, current, role, blockedList}
 
     useEffect(() => {
 
-        if (selData && selData.event)
-        {
+        if (selData && selData.event) {
             if (hide)
-                hide();            
+                hide();
             // show(selData.event, {id: JSON.stringify(selData.data)});
             show(selData.event);
             selData.event = null;
         }
     }, [selData, show, hide, usersStatus, blockedList]);
 
-    function handleAddFriend(){
+    function handleAddFriend() {
         let update: updateUser = {
             selfEmail: email,
             otherId: global.selectedUser.id
@@ -220,7 +233,7 @@ function Status({users, current, role, blockedList}
         socket.emit("add friend", update);
     }
 
-    function handleCreateGame(){
+    function handleCreateGame() {
         socket.emit("start_private", (player: Player) => {
             const invitation: gameInvitation = {
                 gameInfo: player,
@@ -235,7 +248,7 @@ function Status({users, current, role, blockedList}
         });
     }
 
-    function handleMute(mins: number){
+    function handleMute(mins: number) {
         let update: mute = {
             duration: mins,
             email: global.selectedUser.email,
@@ -244,7 +257,7 @@ function Status({users, current, role, blockedList}
         socket.emit("mute user", update);
     }
 
-    function handleBlockUser(){
+    function handleBlockUser() {
         let update: updateUser = {
             selfEmail: email,
             otherId: global.selectedUser.id
@@ -252,7 +265,7 @@ function Status({users, current, role, blockedList}
         socket.emit("block user", update);
     }
 
-    function handleUnblockUser(){
+    function handleUnblockUser() {
         let update: updateUser = {
             selfEmail: email,
             otherId: global.selectedUser.id
@@ -260,7 +273,7 @@ function Status({users, current, role, blockedList}
         socket.emit("unblock user", update);
     }
 
-    function handleBeAdmin(){
+    function handleBeAdmin() {
         let update: updateChannel = {
             channelId: current!.id,
             email: email,
@@ -274,7 +287,7 @@ function Status({users, current, role, blockedList}
         socket.emit("be admin", update);
     }
 
-    function handleNotAdmin(){
+    function handleNotAdmin() {
         let update: updateChannel = {
             channelId: current!.id,
             email: email,
@@ -288,7 +301,7 @@ function Status({users, current, role, blockedList}
         socket.emit("not admin", update);
     }
 
-    function handleKickOut(){
+    function handleKickOut() {
         let update: updateChannel = {
             channelId: current!.id,
             email: email,
@@ -306,9 +319,9 @@ function Status({users, current, role, blockedList}
         <>
             {users?.map((value, index) => {
                 return (
-                <div key={index}>
-                    <OneStatus data={value} setSelData={setSelData} setHide={setHide} blockedList={blockedList}/>
-                </div>
+                    <div key={index}>
+                        <OneStatus data={value} setSelData={setSelData} setHide={setHide} blockedList={blockedList} />
+                    </div>
                 )
             })}
             <Menu id={JSON.stringify(global.selectedUser)}>
@@ -321,37 +334,41 @@ function Status({users, current, role, blockedList}
                     </Item>
                     : <></>
                 }
-                { global.selectedUser?.isBlocked ? 
-                <Item onClick={handleUnblockUser}>unblock user</Item>
+                {global.selectedUser?.isBlocked ?
+                    <Item onClick={handleUnblockUser}>unblock user</Item>
                     :
-                <Item onClick={handleBlockUser}>block user</Item>
+                    <Item onClick={handleBlockUser}>block user</Item>
                 }
-                <Separator/>
-                {role === "owner" && 
+                <Separator />
+                {role === "owner" &&
                     (global.selectedUser?.isInvited === false) ?
                     <>
-                        <Item 
-                            style={{display:
-                                (global.selectedUser?.isAdmin === false) ? "" : "none"}}
+                        <Item
+                            style={{
+                                display:
+                                    (global.selectedUser?.isAdmin === false) ? "" : "none"
+                            }}
                             onClick={handleBeAdmin}>
                             assign as admin
                         </Item>
-                        <Item 
-                            style={{display: 
-                                (global.selectedUser?.isAdmin === true) ? "" : "none"}}
+                        <Item
+                            style={{
+                                display:
+                                    (global.selectedUser?.isAdmin === true) ? "" : "none"
+                            }}
                             onClick={handleNotAdmin}>
                             unset admin right
                         </Item>
                     </> : <></>}
-                {(role === "admin" || role === "owner") && 
-                    (global.selectedUser?.isInvited === false) ? 
+                {(role === "admin" || role === "owner") &&
+                    (global.selectedUser?.isInvited === false) ?
                     <>
                         <Submenu label="mute">
-                            <Item 
+                            <Item
                                 onClick={() => handleMute(5)}>
                                 5 mins
                             </Item>
-                            <Item 
+                            <Item
                                 onClick={() => handleMute(10)}>
                                 10 mins
                             </Item>
@@ -373,11 +390,13 @@ function Status({users, current, role, blockedList}
     )
 }
 
-function OneStatus({data, setSelData, setHide, blockedList}
-    : { data: oneUser,
-        setSelData: (d : any) => void,
+function OneStatus({ data, setSelData, setHide, blockedList }
+    : {
+        data: oneUser,
+        setSelData: (d: any) => void,
         setHide: (d: any) => void,
-        blockedList: [] }) {
+        blockedList: []
+    }) {
 
     const email = localStorage.getItem("userEmail");
     const [avatarURL, setAvatarURL] = useState("");
@@ -397,27 +416,25 @@ function OneStatus({data, setSelData, setHide, blockedList}
 
         let found = undefined;
         found = usersStatus?.find((map: IUserStatus) => map.key === data.id);
-        if (found !== undefined)
-        {
-            switch(found.userModel.status)
-            {
-                case(0):
+        if (found !== undefined) {
+            switch (found.userModel.status) {
+                case (0):
                     setStatus("status-offline");
                     break;
-                case(1):
+                case (1):
                     setStatus("status-online");
                     break;
-                case(2):
+                case (2):
                     setStatus("status-ingame");
                     break;
             }
         }
-      }, [data.id, usersStatus]);
+    }, [data.id, usersStatus]);
 
     const handleMenu = (event: any) => {
 
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        let { hideAll } = useContextMenu({ 
+        let { hideAll } = useContextMenu({
             id: JSON.stringify(global.selectedUser)
         });
         setHide(hideAll);
@@ -427,39 +444,43 @@ function OneStatus({data, setSelData, setHide, blockedList}
         global.selectedUser.isOnline = global.onlineStatus === 1;
 
         event.preventDefault();
-        setSelData({data: data, event: event});
+        setSelData({ data: data, event: event });
     }
 
     return (
         <div
-            style={{display: data ? "" : "none"}}
+            style={{ display: data ? "" : "none" }}
             className="one-status"
-            onContextMenu={email !== data?.email ? (e) => handleMenu(e) : undefined }
-            onClick = {
+            onContextMenu={email !== data?.email ? (e) => handleMenu(e) : undefined}
+            onClick={
                 () => navigate("/app/public/" + data?.id)}>
-                <div className={`one-pic status-ball ${status}`}
-                    style={{backgroundImage: `url("${avatarURL}")`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center"}}/>
-                <p className="one-name">
-                    {data?.username}
-                </p>
+            <div className={`one-pic status-ball ${status}`}
+                style={{
+                    backgroundImage: `url("${avatarURL}")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center"
+                }} />
+            <p className="one-name">
+                {data?.username}
+            </p>
         </div>
     )
 }
 
-function JoinChannel({channelId, outsider, isPassword}
-    : { channelId: number | undefined,
+function JoinChannel({ channelId, outsider, isPassword }
+    : {
+        channelId: number | undefined,
         outsider: boolean | undefined,
-        isPassword: boolean | undefined}) {
+        isPassword: boolean | undefined
+    }) {
     const email = localStorage.getItem("userEmail");
     const [password, setPass] = useState("");
-    
+
     const handleSetPass = (event: any) => {
         setPass(event.target.value);
     }
 
-    const handleJoin = () => {    
+    const handleJoin = () => {
         let update: updateChannel = {
             channelId: channelId,
             email: email,
@@ -476,32 +497,33 @@ function JoinChannel({channelId, outsider, isPassword}
 
     return (
         <div
-            style={{display: outsider ? "" : "none"}}>
-            <div 
+            style={{ display: outsider ? "" : "none" }}>
+            <div
                 className="password-zone"
-                style={{display: isPassword ? "" : "none"}}>
-                    <p
-                        className="protected-tag">
-                            PROTECTED
-                    </p>
-                    <p
-                        className="password-tag">
-                            password
-                    </p>
-                    <input
-                        className="password-input"
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={handleSetPass}
-                        placeholder="password"
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter")
-                                handleJoin()}}/>
+                style={{ display: isPassword ? "" : "none" }}>
+                <p
+                    className="protected-tag">
+                    PROTECTED
+                </p>
+                <p
+                    className="password-tag">
+                    password
+                </p>
+                <input
+                    className="password-input"
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={handleSetPass}
+                    placeholder="password"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter")
+                            handleJoin()
+                    }} />
             </div>
             <div
                 className="join-channel-button"
-                style={{display: outsider ? "" : "none"}}
+                style={{ display: outsider ? "" : "none" }}
                 onMouseUp={handleJoin}>
                 join channel
             </div>

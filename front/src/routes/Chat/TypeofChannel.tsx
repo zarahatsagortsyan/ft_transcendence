@@ -1,3 +1,4 @@
+import { TagSuggestion } from "react-tag-autocomplete";
 import { Player } from "../InterfaceofGame";
 
 export type oneSuggestion = {
@@ -27,7 +28,7 @@ export type newChannel = {
     isPassword: boolean;
     password: string;
     email: string | null;
-    members: Tag[];
+    members: TagSuggestion[];
 }
 
 export type newDM = {
