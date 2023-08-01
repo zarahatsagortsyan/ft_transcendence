@@ -12,8 +12,11 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @IsString()
+	@IsNotEmpty()
     @Column()
     user_name: string;
+
 
     @Column()
     nick_name: string;
@@ -45,6 +48,35 @@ export class User {
     @Column({ default: 'null' })
     refresh_token: string;
 
-    // @Column()
-    // access_token: string;
+	@IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+	gamesWon: number;
+
+	@IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+	gamesLost: number;
+
+	@IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+	gamesPlayed: number;
+
+	@IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+	rank: number;
+
+	@IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+	score: number;
+
+    @IsNumber()
+	@IsNotEmpty()
+    @Column({ default: 0 })
+    winRate: number;
+    @Column({ type: 'integer', array: true, default: [] })
+    gameHistory: number[];
 }
