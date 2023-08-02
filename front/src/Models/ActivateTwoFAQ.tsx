@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { NotifCxt } from "../App";
-import { twoFAGenerate, twoFAOn } from "../Queries/TwoFAQ";
+import { twoFAGenerate, twoFAOn } from "../queries/TwoFAQ";
 
 export function Activate2FA(props: any) {
   const notif = useContext(NotifCxt);

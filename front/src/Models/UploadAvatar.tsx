@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { NotifCxt } from "../App";
-import { uploadAvatarQuery } from "../Queries/Avatar";
+import { uploadAvatarQuery } from "../queries/Avatar";
 
 export function MUploadAvatar(props: any) {
   const notif = useContext(NotifCxt);

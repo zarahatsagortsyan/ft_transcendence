@@ -2,7 +2,7 @@ import React from 'react';
 import { io, Socket } from "socket.io-client";
 import { Game_data, Player, Coordinates, StatePong, Button, ButtonState, Msg, MsgState, PaddleProps, StatePaddle, SettingsProps, SettingsState, PropsPong } from './InterfaceofGame';
 import FocusTrap from 'focus-trap-react';
-import { getUserAvatarQuery } from '../Queries/Avatar';
+import { getUserAvatarQuery } from '../queries/Avatar';
 import { socket as chatSocket } from '../App';
 import { Navigate } from 'react-router-dom';
 import { NotifCxt } from '../App';

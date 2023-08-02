@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { NotifCxt } from "../../../App";
-import { twoFAOff } from "../../../Queries/TwoFAQ";
+import { twoFAOff } from "../../../queries/TwoFAQ";
 
 export const TwoFA = (props: any) => {
   const notif = useContext(NotifCxt);

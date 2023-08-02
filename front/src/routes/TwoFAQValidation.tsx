@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NotifCxt } from "../App";
-import { useAuth } from "../Globals/Contexts";
-import { twoFAAuth } from "../Queries/TwoFAQ";
+import { useAuth } from "../globals/contexts";
+import { twoFAAuth } from "../queries/TwoFAQ";
 
 export default function TwoFAValidation() {
   const notif = useContext(NotifCxt);

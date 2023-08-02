@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Menu, Item } from "react-contexify";
 import { useNavigate } from "react-router-dom";
 import { NotifCxt } from "../App";
-import { addFriendQuery } from "../Queries/Friends";
+import { addFriendQuery } from "../queries/Friends";
 
 export const COnUser = (props: any) => {
   const navigate = useNavigate();

@@ -4,10 +4,10 @@ import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import './App.css';
 import { TAlert } from "./Alert/Alert";
-import { INotifCxt, IUserStatus } from "./Globals/Interfaces";
+import { INotifCxt, IUserStatus } from "./globals/Interfaces";
 
-import { GameRequestCard } from "./Routes/Gamerequest";
-import { gameInvitation } from "./Routes/Chat/TypeofChannel";
+import { GameRequestCard } from "./routes/Gamerequest";
+import { gameInvitation } from "./routes/Chat/TypeofChannel";
 
 let LoginStatus = {
   islogged: false,

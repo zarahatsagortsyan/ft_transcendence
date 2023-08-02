@@ -18,11 +18,11 @@ import {
 import { AddUserIcon, QuitIcon } from "./Icon";
 import {  TagSuggestion } from 'react-tag-autocomplete';
 import { socket } from "../../App"
-import { getUserAvatarQuery } from "../../Queries/Avatar";
+import { getUserAvatarQuery } from "../../queries/Avatar";
 import { Player } from "../InterfaceofGame";
 import { useNavigate } from "react-router-dom";
 import { UsersStatusCxt } from "../../App";
-import { IUserStatus } from "../../Globals/Interfaces";
+import { IUserStatus } from "../../globals/Interfaces";
 import {  ReactTags } from 'react-tag-autocomplete';
 
 

@@ -7,7 +7,7 @@
 //     useContextMenu,
 // } from "react-contexify";
 // import { ReactSearchAutocomplete } from "react-search-autocomplete";
-// import { getUserAvatarQuery } from "../../Queries/Avatar";
+// import { getUserAvatarQuery } from "../../queries/Avatar";
 
 // const MENU_CHANNEL = "menu_channel";
 // const MENU_DM = "menu_dm";
@@ -358,7 +358,7 @@ import { socket } from "../../App";
 import { chatPreview, newDM, fetchDM, oneSuggestion, updateChannel, updateUser } from "./TypeofChannel";
 import { Menu, Item, useContextMenu } from "react-contexify";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
-import { getUserAvatarQuery } from "../../Queries/Avatar";
+import { getUserAvatarQuery } from "../../queries/Avatar";
 
 // const MENU_CHANNEL = "menu_channel";
 const MENU_DM = "menu_dm";

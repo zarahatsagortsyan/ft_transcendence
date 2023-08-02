@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getLeaderBoard } from "../Queries/User";
-import { getUserAvatarQuery } from "../Queries/Avatar";
+import { getLeaderBoard } from "../queries/User";
+import { getUserAvatarQuery } from "../queries/Avatar";
 import { useNavigate } from "react-router-dom";
 
 type gameRecord = {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { socket } from "../App"
 import { useNavigate } from "react-router-dom";
 import { Player } from "./InterfaceofGame";
-import { getUserAvatarQuery } from "../Queries/Avatar";
+import { getUserAvatarQuery } from "../queries/Avatar";
 import { gameInvitation } from "./Chat/TypeofChannel";
 
 export function GameRequestCard({game, gameRequest, onGameRequest}

@@ -1,4 +1,4 @@
-import { authContent } from "./Headers";
+import { authContent } from "./headers";
 
 export const getUserFriends = (otherId: number) => {
     let body = JSON.stringify({

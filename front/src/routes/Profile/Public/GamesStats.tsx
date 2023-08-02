@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import { useContextMenu } from "react-contexify";
 import { UsersStatusCxt } from "../../../App";
-import { IUserStatus } from "../../../Globals/Interfaces";
-import { getUserAvatarQuery } from "../../../Queries/Avatar";
-import { getGameStats } from "../../../Queries/Games";
+import { IUserStatus } from "../../../globals/Interfaces";
+import { getUserAvatarQuery } from "../../../queries/Avatar";
+import { getGameStats } from "../../../queries/Games";
 
 export default function DisplayGamesStats(props: any) {
   const usersStatus = useContext(UsersStatusCxt);

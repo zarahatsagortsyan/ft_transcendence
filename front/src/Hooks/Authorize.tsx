@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useLocation, Navigate, matchPath } from "react-router-dom";
-import { AuthContext, useAuth } from "../Globals/Contexts";
-import { logOut } from "../Queries/Auth";
+import { AuthContext, useAuth } from "../globals/contexts";
+import { logOut } from "../queries/Auth";
 
 export const RedirectWhenAuth = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();

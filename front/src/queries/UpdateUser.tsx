@@ -1,4 +1,4 @@
-import { authContent, auth } from "./Headers";
+import { authContent, auth } from "./headers";
 
 export const updateAvatarQuery = (file: any) => {
     var formdata = new FormData();

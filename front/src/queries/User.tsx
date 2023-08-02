@@ -1,4 +1,4 @@
-import { auth } from './Headers'
+import { auth } from './headers'
 
 export const getUserBlocked = () => {
     return fetchGet("get_blocked", storeFriendsInfo);

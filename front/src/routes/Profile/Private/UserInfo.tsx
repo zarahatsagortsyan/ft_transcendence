@@ -4,7 +4,7 @@ import { NotifCxt } from "../../../App";
 import {
   updateUsernameQuery,
   updateEmailQuery,
-} from "../../../Queries/UpdateUser";
+} from "../../../queries/UpdateUser";
 
 export const ModifyEntry = (props: any) => {
   const notif = useContext(NotifCxt);

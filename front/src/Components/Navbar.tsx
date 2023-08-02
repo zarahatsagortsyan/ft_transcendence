@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../Globals/Contexts";
+import { useAuth } from "../globals/contexts";
 import { MLogoutValid } from "../Models/Logout";
 
 const GetIcons = (props: any) => {

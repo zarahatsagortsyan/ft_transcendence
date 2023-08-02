@@ -3,20 +3,20 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 
-import Game from "./Routes/Game";
-import Auth from "./Routes/Auth/Auth";
-import SignIn from "./Routes/Auth/SignIn";
-import SignUp from "./Routes/Auth/SignUp";
-import Chat from "./Routes/Chat";
-import UserInterface from "./Routes/UserInterface";
+import Game from "./routes/Game";
+import Auth from "./routes/Auth/Auth";
+import SignIn from "./routes/Auth/SignIn";
+import SignUp from "./routes/Auth/SignUp";
+import Chat from "./routes/Chat";
+import UserInterface from "./routes/UserInterface";
 import { AuthProvider, RedirectWhenAuth, RequireAuth } from "./Hooks/Authorize";
-import TwoFAValidation from "./Routes/TwoFAQValidation";
-import LeaderBoard from "./Routes/LeaderBoard";
-import UserPrivateProfile from "./Routes/Profile/Private/PrivateProfile";
-import { BlockedList } from "./Routes/Profile/Private/Relations/Blocked";
-import { FriendsList } from "./Routes/Profile/Private/Relations/Friends";
-import { PendingList } from "./Routes/Profile/Private/Relations/Pending";
-import UserPublicProfile from "./Routes/Profile/Public/PublicProfile";
+import TwoFAValidation from "./routes/TwoFAQValidation";
+import LeaderBoard from "./routes/LeaderBoard";
+import UserPrivateProfile from "./routes/Profile/Private/PrivateProfile";
+import { BlockedList } from "./routes/Profile/Private/Relations/Blocked";
+import { FriendsList } from "./routes/Profile/Private/Relations/Friends";
+import { PendingList } from "./routes/Profile/Private/Relations/Pending";
+import UserPublicProfile from "./routes/Profile/Public/PublicProfile";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);

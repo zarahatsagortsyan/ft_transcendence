@@ -8,7 +8,7 @@ import {
   unblockUserQuery,
   addFriendQuery,
   denyInviteQuery,
-} from "../../../../Queries/Friends";
+} from "../../../../queries/Friends";
 
 export const DisplayRow = (props: any) => {
   const { show } = useContextMenu();

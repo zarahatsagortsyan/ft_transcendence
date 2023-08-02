@@ -2,11 +2,11 @@
 // import { useLocation, useNavigate } from "react-router-dom";
 // import Button from "react-bootstrap/Button";
 // import { Outlet } from "react-router-dom";
-// import { IUserInfo } from "../../Globals/Interfaces";
-// import { GUserInputsRefs } from "../../Globals/Variables";
-// import { useAuth } from "../../Globals/Contexts";
-// import { signUp, signIn } from "../../Queries/Auth";
-// import { getLeaderBoard, getUserData } from "../../Queries/User";
+// import { IUserInfo } from "../../globals/Interfaces";
+// import { GUserInputsRefs } from "../../globals/variables";
+// import { useAuth } from "../../globals/contexts";
+// import { signUp, signIn } from "../../queries/Auth";
+// import { getLeaderBoard, getUserData } from "../../queries/User";
 // import { NotifCxt } from "../../App";
 
 // export default function Auth() {
@@ -120,11 +120,11 @@ import { useCallback, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { Outlet } from "react-router-dom";
-import { IUserInfo } from "../../Globals/Interfaces";
-import { GUserInputsRefs } from "../../Globals/Variables";
-import { useAuth } from "../../Globals/Contexts";
-import { signUp, signIn } from "../../Queries/Auth";
-import { getLeaderBoard, getUserData } from "../../Queries/User";
+import { IUserInfo } from "../../globals/Interfaces";
+import { GUserInputsRefs } from "../../globals/variables";
+import { useAuth } from "../../globals/contexts";
+import { signUp, signIn } from "../../queries/Auth";
+import { getLeaderBoard, getUserData } from "../../queries/User";
 import { NotifCxt } from "../../App";
 
 export default function Auth() {
@@ -132,7 +132,7 @@ export default function Auth() {
   let navigate = useNavigate();
   let auth = useAuth();
   let location = useLocation();
-  const hrefURL = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-75d175baeea78763f7aa474aa964d04836779fec7243a0d29769ee24a1783a39&redirect_uri=http%3A%2F%2F10.18.116.247%3A3000%2Fauth%2Fredirect&response_type=code&state=absjhasagsgsajg"; // Updated API endpoint
+  const hrefURL = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c57abb96df660cfb09912c39dc9e3b4dc20bd2741f4281216ca1bdb29b76bd3f&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fauth%2Fcallback&response_type=code"; // Updated API endpoint
 
   const userSignIn = useCallback(() => {
     let username = localStorage.getItem("userName");

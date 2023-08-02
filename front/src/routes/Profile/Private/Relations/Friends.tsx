@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import { ItableRow, IUserStatus } from "../../../../Globals/Interfaces";
-import { getUserAvatarQuery } from "../../../../Queries/Avatar";
-import { getUserFriends } from "../../../../Queries/Friends";
+import { ItableRow, IUserStatus } from "../../../../globals/Interfaces";
+import { getUserAvatarQuery } from "../../../../queries/Avatar";
+import { getUserFriends } from "../../../../queries/Friends";
 import { DisplayRow } from "./RowUsers";
 import { UsersStatusCxt } from "../../../../App";
 import { Spinner } from "react-bootstrap";

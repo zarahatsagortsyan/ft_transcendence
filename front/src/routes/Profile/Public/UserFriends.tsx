@@ -11,9 +11,9 @@ import { useContextMenu } from "react-contexify";
 import { useNavigate } from "react-router-dom";
 import { UsersStatusCxt } from "../../../App";
 import { renderTooltip } from "../../../Components/SimpleTool";
-import { ItableRow, IUserStatus } from "../../../Globals/Interfaces";
-import { getUserAvatarQuery } from "../../../Queries/Avatar";
-import { getUserFriends } from "../../../Queries/Friends";
+import { ItableRow, IUserStatus } from "../../../globals/Interfaces";
+import { getUserAvatarQuery } from "../../../queries/Avatar";
+import { getUserFriends } from "../../../queries/Friends";
 
 export default function DisplayUserFriends(props: any) {
   const usersStatus = useContext(UsersStatusCxt);

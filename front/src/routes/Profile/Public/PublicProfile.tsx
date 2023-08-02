@@ -2,14 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import DisplayGamesStats from "./GamesStats";
-import { IUserStatus, userModel } from "../../../Globals/Interfaces";
-import { getUserAvatarQuery } from "../../../Queries/Avatar";
-import { getOtherUser } from "../../../Queries/OtherUser";
+import { IUserStatus, userModel } from "../../../globals/Interfaces";
+import { getUserAvatarQuery } from "../../../queries/Avatar";
+import { getOtherUser } from "../../../queries/OtherUser";
 import DisplayUserFriends from "./UserFriends";
 import { COnUser } from "../../../User/OnUser";
 import { renderTooltip } from "../../../Components/SimpleTool";
 import { NotifCxt, UsersStatusCxt } from "../../../App";
-import { addFriendQuery } from "../../../Queries/Friends";
+import { addFriendQuery } from "../../../queries/Friends";
 
 const userInfoInit: userModel = {
   id: 0,

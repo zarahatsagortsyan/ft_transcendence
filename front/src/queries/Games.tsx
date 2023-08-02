@@ -1,4 +1,4 @@
-import { authContent } from "./Headers";
+import { authContent } from "./headers";
 
 export const getGameStats = (otherUsername: number) => {
     let body = JSON.stringify({

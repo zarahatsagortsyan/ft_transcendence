@@ -1,4 +1,4 @@
-import { auth } from './Headers'
+import { auth } from './headers'
 import { getUserData } from './User'
 
 let myHeaders = new Headers();

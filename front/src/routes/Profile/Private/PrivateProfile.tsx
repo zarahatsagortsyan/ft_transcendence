@@ -3,7 +3,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Activate2FA } from "../../../Models/ActivateTwoFAQ";
 import { MUploadAvatar } from "../../../Models/UploadAvatar";
-import { getAvatarQuery } from "../../../Queries/Avatar";
+import { getAvatarQuery } from "../../../queries/Avatar";
 import { ModifyEntry } from "./UserInfo";
 import { TwoFA } from "./TwoFAQ";
 import { UsersRelations } from "./Relations/UsersRelations";
