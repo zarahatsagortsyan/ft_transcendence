@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, ForbiddenException } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { IUser } from '../models/user.interface';
 import { Observable } from "rxjs";
@@ -6,36 +6,172 @@ import { IBlocked } from '../models/blocked.interface';
 import { Logger } from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { IFriendship } from '../models/friendship.interface';
+import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
+import { isNumber, isNumberString } from 'class-validator';
 
 @Controller('user')
 
 export class UserController {
     logger = new Logger('AppController');
     constructor(private userService: UserService) {}
+    
+    @Get('getMe')
+	getMe(@GetCurrentUserId() id: number) {
+        console.log("getMe");
+		this.logger.log('get current user');
+		const userDto = this.userService.getUser(id);
+		return userDto;
+	}
+    
+    @Get('getUser')
+    getUser(@Query('otherId') otherId: number | string) {
+		this.logger.log('getUser by ID ' + otherId);
+		try {
+            console.log("0");
+
+			if (isNumberString(otherId)) {
+                console.log("1");
+				const userDto = this.userService.getUser(Number(otherId));
+				return userDto;
+			} else {
+            console.log("3");
+
+				const userDto = this.userService.getUserByUsername(
+					String(otherId),
+				);
+				return userDto;
+			}
+		} catch {
+            console.log("2");
+
+			throw new ForbiddenException('getUser error');
+		}
+	}
+
+    @Get('getLeaderboard')
+	getLeaderboard() {
+		this.logger.log('getLeaderboard');
+		return this.userService.getLeaderboard();
+	}
+
+    @Get('getGameHistory')
+	getGameHistory(@Query('otherId') otherId: number) {
+		this.logger.log('getGameHistory otherID: ' + otherId);
+		return this.userService.getGameHistory(otherId);
+	}
+
+	@Post('getAllFriends')
+	async getAllFriends(@Body('otherId') otherId: number) {
+		this.logger.log('getAllFriends otherID: ' + otherId);
+		const result = await this.userService.getAllFriends(otherId);
+		return result;
+	}
+
+	@Get('getAllPending')
+	async getAllPending(@GetCurrentUserId() id: number) {
+		this.logger.log('getAllPending ID: ' + id);
+		const result = await this.userService.getAllPending(id);
+		return result;
+	}
+
+	@Get('getBlocked')
+	async getBlocked(@GetCurrentUserId() id: number) {
+		this.logger.log('getBlocked ID: ' + id);
+		const result = await this.userService.getBlocks(id);
+		return result;
+	}
+
+	@Get('isFriend')
+	async isFriend(
+		@GetCurrentUserId() id: number,
+		@Body('otherId') otherId: number,
+	) {
+		this.logger.log('isFriend ID: ' + id + ' -> otherID: ' + otherId);
+		const result = await this.userService.isFriend(id, otherId);
+		return result;
+	}
+
+	@Get('isBlocked')
+	async isBlocked(
+		@GetCurrentUserId() id: number,
+		@Body('otherId') otherId: number,
+	) {
+		this.logger.log('isBlocked ID: ' + id + ' -> otherID: ' + otherId);
+		const result = await this.userService.isBlocked(id, otherId);
+		return result;
+	}
+
+
+    //USER PROFILE RELATED FUNCTIONS
+
+	@Post('/updateUsername')
+	async updateUsername(
+
+		@GetCurrentUserId() id: number,
+        @Query('newUsername') newUsername: string
+	) {
+		this.logger.log(
+			'updateUsername ID ' + id + ' -> username: ' + newUsername,
+		);
+		try {
+			const result = await this.userService.updateUsername(id, newUsername);
+			return result;
+		} catch {
+			throw new ForbiddenException('Username already exists');
+		}
+	}
+
+	@Post('/updateAvatar')
+	async updateAvatar(
+		@Body('avatar') newAvatar: string,
+		@GetCurrentUserId() id: number,
+	) {
+		this.logger.log('updateAvatar ID ' + id + ' -> Avatar: ' + newAvatar);
+		const result = await this.userService.updateAvatar(id, newAvatar);
+		return result;
+	}
+
     @Post('createUser')
     createUser(@Body('') user: IUser): Observable<IUser> {
         return this.userService.createUser(user)
     }
 
-    @Post('blockUser')
-    blockUser(@Body('') block: IBlocked): Observable<IBlocked> {
-        return this.userService.blockUser(block)
+    // @Post('createUserPromise')
+    // createUserPromise(@Body('') user: IUser): Promise<IUser> {
+    //     return this.userService.createUserPromise(user)
+    // }
+
+    // @Post('blockUser')
+    // blockUser(@Body('') block: IBlocked): Observable<IBlocked> {
+    //     return this.userService.blockUser(block)
+    // }
+    @Post('/blockUser')
+	async blockUser(@GetCurrentUserId() id: number, @Body('otherId') otherId: number) {
+		this.logger.log('blockUser ID: ' + id + ' -> otherID: ' + otherId);
+		const result = await this.userService.blockUser(id, otherId);
+		return result;
+	}
+    @Post('/unblockUser')
+    async unblockUser(@GetCurrentUserId() id: number, @Body('otherId') otherId: number) {
+		this.logger.log('unblockUser ID: ' + id + ' -> otherID: ' + otherId);
+        const result = await this.userService.unblockUser(id, otherId);
+		return result;
     }
 
-    @Post('unblockUser')
-    unblockUser(@Body('') block: IBlocked) {
-        return this.userService.unblockUser(block)
-    }
+    // @Get('getUser')
+    // async getUser(@Query('user_id') user_id: number){
+    //   return await this.userService.getUser(user_id)
+    // }
 
-    @Get('getUser')
-    async getUser(@Query('user_id') user_id: number){
-      return await this.userService.getUser(user_id)
-    }
+    // @Get('getUserByUsername')
+    // async getUserByUsername(@Query('username') user_id: number){
+    //   return await this.userService.getUser(user_id)
+    // }
 
-    @Get('getUserByEmail')
-    async getUserByEmail(@Query('email') email: string){
-      return await this.userService.getUserByEmail(email)
-    }
+    // @Get('getUserByEmail')
+    // async getUserByEmail(@Query('email') email: string){
+    //   return await this.userService.getUserByEmail(email)
+    // }
 
 
     @Get('getAllUsers')
@@ -52,35 +188,50 @@ export class UserController {
       return await this.userService.getUsersWithBlocked(blockerId);
     }
 
-    @Post('friendRequest')
+
+    ////RELATIONSHIP RELATED FUNCTIONS
+    @Post('/friendRequest')
     friendRequest(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number) {
+        this.logger.log('friendRequest ID: ' + user_id + ' -> otherID: ' + friend_id);
         return this.userService.friendRequest(user_id, friend_id)
     }
 
-    @Post('friendRequestAccept')
+    @Post('/friendRequestAccept')
     friendRequestAccept(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number){
+        this.logger.log('friendRequestAccept ID: ' + user_id + ' -> otherID: ' + friend_id);
         return this.userService.friendRequestAccept(user_id, friend_id)
     }
 
-    @Post('friendRequestDecline')
+    @Post('/friendRequestDecline')
     friendRequestDecline(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number){
+        this.logger.log('friendRequestDecline ID: ' + user_id + ' -> otherID: ' + friend_id);
         return this.userService.friendRequestDecline(user_id, friend_id)
     }
 
-    @Post('friendRequestCancel')
+    @Post('/friendRequestCancel')
     friendRequestCancel(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number){
+        this.logger.log('friendRequestCancel ID: ' + user_id + ' -> otherID: ' + friend_id);
         return this.userService.friendRequestCancel(user_id, friend_id)
     }
+
+    @Post('/rmFriend')
+	async rmFriend(@GetCurrentUserId() id: number, @Body('otherId') otherId: number,
+	) {
+		this.logger.log('rmFriend ID: ' + id + ' -> otherID: ' + otherId);
+		const result = await this.userService.rmFriend(id, otherId);
+
+		return result;
+	}
 
     @Get('isPending')
     isPending(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number) {
         return this.userService.isPending(user_id, friend_id);
     }
 
-    @Get('isFriend')
-    isFriend(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number) {
-        return this.userService.isFriend(user_id, friend_id);
-    }
+    // @Get('isFriend')
+    // isFriend(@Query('user_id') user_id: number, @Query('friend_id') friend_id: number) {
+    //     return this.userService.isFriend(user_id, friend_id);
+    // }
 
     @Get('getPending')  
     async getPending(@Query('user_id') user_id: number) {

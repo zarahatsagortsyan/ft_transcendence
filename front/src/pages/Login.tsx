@@ -58,9 +58,11 @@ function Login() {
       <div className="logo-container">
         <img src={myImage} alt="Logo" className="logo" />
       </div>
-      <Button onClick={handleLogin} className="login-button">
-        Login
-      </Button>
+      <a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c57abb96df660cfb09912c39dc9e3b4dc20bd2741f4281216ca1bdb29b76bd3f&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fauth%2Fcallback&response_type=code">
+        <Button onClick={handleLogin} className="login-button">
+          Login
+        </Button>
+      </a>
     </Container>
   );
 }

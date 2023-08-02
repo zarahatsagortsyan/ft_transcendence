@@ -1,5 +1,5 @@
-import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { User } from '../models/user.entity';
+import { Inject,Injectable, BadRequestException, ForbiddenException, NotFoundException, forwardRef } from '@nestjs/common';
+import { User, UserStatus } from '../models/user.entity';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { IUser } from '../models/user.interface';
 import { Observable, Subject, from } from 'rxjs';
@@ -9,6 +9,53 @@ import { FriendStatus, Friendship } from '../models/friendship.entity';
 import { Blocked } from '../models/blocked.entity';
 import { Equal, FindManyOptions, Repository, createQueryBuilder } from 'typeorm';
 import { Logger } from '@nestjs/common';
+import { AuthUserDto } from 'src/auth/dto/auth.dto';
+import { plainToClass } from 'class-transformer';
+import {Game } from '../../game/models/game.entity'
+import {GameService } from '../../game/services/game.service'
+
+//USER
+// READ
+//async getUser(id: number)
+//async getAllUsers()
+//async getUserfromUsername(username: string)
+//async getLeaderboard()
+//async getGameHistory(id: number)
+
+//UPDATE
+// async updateUsername(id: number, newUsername: string)
+// async updateAvatar(id: number, newAvatar: string)
+// async updateRefreshToken(id: number, rtoken: string)
+// async updateWinRate(id: number)
+
+//CREATE
+// createUser(user: IUser): Observable<User>
+// createUserPromise(u: AuthUserDto): Promise<User>
+
+//BLOCK
+//async getBlockedUsers(blocker_id: number): Promise<Blocked[]>
+//async blockUser(id: number, otherId: number)
+//async unblockUser(unblock: IBlocked):Promise<void>
+//async getBlocks(id: number) 
+//async isBlocked(user_id: number, friend_id: number)
+//async getUsersWithBlocked(blocker_id: number): Promise<User[]>
+
+//Friendship
+// async isFriend(userId: number, frinedId: number)
+// async isPending(userId: number, frinedId: number)
+// async getAllFriends(user_id: number)
+// async getAllPending(user_id: number)
+// async friendRequest(user_id: number, friend_id: number)
+// async friendRequestAccept(user_id: number, friend_id: number )
+// async friendRequestDecline(user_id: number, friend_id: number)
+// async friendRequestCancel(user_id:number, friend_id: number)
+// async rmFriend(id: number, otherId: number)
+
+//GAME
+// async updateWinRate(id: number)
+// async hasWon(id: number) 
+// async hasLost(id: number)
+
 @Injectable()
 export class UserService {
     logger = new Logger('AppController');
@@ -19,54 +66,216 @@ export class UserService {
         private readonly friendshipRepository: Repository<Friendship>,
         @InjectRepository(Blocked)
         private readonly blockedRepository: Repository<Blocked>,
+        @Inject(forwardRef(() => GameService))
+        private readonly gameService: GameService
         ) {}
         
+        // async getAllUsers() {
+        //     return await this.userRepository.find({
+        //         order:{id:'asc'},
+        //     });
+        // }
+
         async getAllUsers() {
-            return await this.userRepository.find({
+            const users = await this.userRepository.find({
                 order:{id:'asc'},
             });
+
+            const userListDtos: User[] = [];
+            for (const user_ of users) {
+                const user = await this.userRepository.findOneOrFail({
+                    where: {
+                        id: user_.id,
+                    },
+
+                });
+                const dtoUser = plainToClass(User, user);
+                userListDtos.push(dtoUser);
+            }
+            return userListDtos;
         }
 
-        async getUser(user_id: number)
-        {
-            if (user_id === undefined)
-            {
-                throw new BadRequestException('Undefigned user ID');
+        async getLeaderboard() {
+            //returns a record of all the users, ordered by rank in ascending order
+                const users = await this.userRepository.
+                createQueryBuilder('user')
+                .where('user.gamesPlayed != :gamesPlayed', { gamesPlayed: 0 })
+                .select([
+                  'user.id',
+                  'user.user_name',
+                  'user.rank',
+                  'user.winRate',
+                  'user.gamesLost',
+                  'user.gamesWon',
+                  'user.gamesPlayed',
+                ])
+                .orderBy('user.rank', 'ASC')
+                .getMany();
+              
+            return users;
+        }
+        
+        async getGameHistory(id: number) {
+            const user = await this.userRepository.findOne({
+                where: {
+                    id: id,
+                },
+            });
+    
+            console.log(user.gameHistory);
+            const gameHistoryInt: number[] = user.gameHistory;
+            console.log(gameHistoryInt);
+            if (gameHistoryInt.length === 0) return [];
+    
+            const gameHistory: Game[] = [];
+            for (const gameId of gameHistoryInt) {
+                gameHistory.push(await this.gameService.getGame(gameId));
             }
+    
+            // gameHistory stores PrismaGames[], need to transform them into a SubjectiveGameDtos[]
+            const gameDTOs= [];
+    
+            for (const game of gameHistory) {
+                // identify the opponent
+                let opponentId: number;
+                let userScore: number;
+                let opponentScore: number;
+    
+                game.player1 === id
+                    ? (opponentId = game.player2)
+                    : (opponentId = game.player1);
+                game.player1 === id
+                    ? (userScore = game.score1)
+                    : (userScore = game.score2);
+                game.player1 === id
+                    ? (opponentScore = game.score2)
+                    : (opponentScore = game.score1);
+                const opponent: User = await this.getUser(opponentId);
 
-            try{
-                const user = await this.userRepository.findOne({
+                // fill the SubjectiveGameDto
+                const gameDTO = {
+                    userId: id,
+                    opponentId: opponent.id,
+                    opponentAvatar: opponent.avatar,
+                    opponentUsername: opponent.user_name,
+                    opponentUser: opponent,
+                    opponentRank: opponent.rank,
+                    userScore: userScore,
+                    opponentScore: opponentScore,
+                    victory: userScore > opponentScore ? true : false,
+                };
+                gameDTOs.push(gameDTO);
+            }
+    
+            return gameDTOs;
+        }
+    
+
+        // async getUser(user_id: number)
+        // {
+        //     if (user_id === undefined)
+        //     {
+        //         throw new BadRequestException('Undefigned user ID');
+        //     }
+
+        //     try{
+        //         const user = await this.userRepository.findOne({
+        //             where: {
+        //                 id: user_id,
+        //             },
+        //         });
+        //         return user;
+
+        //     } 
+        //     catch (error){
+        //         throw new ForbiddenException('getUser error: ' + error);
+        //     }
+        // }
+
+        async getUser(id: number) {
+            console.log(id);
+            if (id === undefined) {
+                throw new BadRequestException('Undefined user ID');
+            }
+            // console.log('id', id);
+            try {
+                const user = await this.userRepository.findOneOrFail({
                     where: {
-                        id: user_id,
+                        id: id,
                     },
                 });
-                return user;
-
-            } 
-            catch (error){
-                throw new ForbiddenException('getUser error: ' + error);
+                const dtoUser = plainToClass(User, user);
+                return dtoUser;
+            } catch (error) {
+                throw new ForbiddenException('getUser error : ' + error);
             }
         }
-
-        async getUserByEmail(email: string)
-        {
-            try{
-                const user = await this.userRepository.findOne({
+        async getUserByUsername(username: string) {
+            // console.log('username : ', username);
+            try {
+                const user = await this.userRepository.findOneOrFail({
                     where: {
-                        // user_email: email,
+                        user_name: username,
                     },
                 });
-                return user;
-
-            } 
-            catch (error){
-                throw new ForbiddenException('getUser error: ' + error);
+                const dtoUser = plainToClass(User, user);
+                return dtoUser;
+            } catch (error) {
+                throw new ForbiddenException('getUser error : ' + error);
             }
         }
 
-        //login create user
+        async getUserByUsernameNull(username: string) {
+            // console.log('username : ', username);
+            try {
+                const user = await this.userRepository.findOneOrFail({
+                    where: {
+                        user_name: username,
+                    },
+                });
+                const dtoUser = plainToClass(User, user);
+                return dtoUser;
+            } catch (error) {
+                return null;
+            }
+        }
+        // async getUserByUsername(username: string)
+        // {
+        //     if (username === undefined)
+        //     {
+        //         throw new BadRequestException('Undefigned username');
+        //     }
+
+        //     try{
+        //         const user = await this.userRepository.findOne({
+        //             where: {
+        //                 user_name: username,
+        //             },
+        //         });
+        //         return user;
+
+        //     } 
+        //     catch (error){
+        //         throw new ForbiddenException('getUser error: ' + error);
+        //     }
+        // }
+        
+        /*	CREATE	*/
         createUser(user: IUser): Observable<User> {
             return from(this.userRepository.save(user));
+        }
+
+        createUserPromise(u: AuthUserDto): Promise<User> {
+            console.log("Create em anum axper");
+            const user:IUser=  {
+                user_name: u.user_name,
+                nick_name: "",
+                avatar: u.avatar,
+                user_status : UserStatus.ONLINE,
+                two_factor_auth : false,
+                two_factor_secret : '',
+            };
+            return this.userRepository.save(user);
         }
         
         //USER PROFILE RELATED FUNCTIONS
@@ -102,15 +311,56 @@ export class UserService {
     
 
         //user block
-        blockUser(block: IBlocked): Observable<Blocked> {
-            return from(this.blockedRepository.save(block));
-        }
+        // blockUser(block: IBlocked): Observable<Blocked> {
+        //     return from(this.blockedRepository.save(block));
+        // }
+        async blockUser(id: number, otherId: number) {
+            if (id == otherId || (await this.isBlocked(id, otherId))) {
+                throw new ForbiddenException('Cannot block this user');
+            }
+            if (await this.isFriend(id, otherId)) await this.rmFriend(id, otherId);
 
+            const blockRecord: IBlocked = {
+                blocker_id: id,
+                blocked_id: otherId
+            }
+            return from(this.blockedRepository.save(blockRecord));
+        }
+         //user unblock
+        async unblockUser(id: number, otherId: number) {
+            const blockedRecord = await this.blockedRepository.findOneBy({ blocker_id: id, blocked_id: otherId});
+
+            if (blockedRecord) {
+              await this.blockedRepository.remove(blockedRecord);
+              
+              console.log("User unblocked successfully.");
+              return true;
+            } else {
+              console.log("User is not blocked.");
+            }
+        }   
         //ashxatox
         async getBlockedUsers(blocker_id: number): Promise<Blocked[]> {
             const options: FindManyOptions<Blocked> = {};
             options.where = { blocker_id: Equal(blocker_id) };
             return await this.blockedRepository.find(options);
+        }
+
+        async getBlocks(id: number) {
+            const BlocksIdList = await this.blockedRepository.find({
+                where: {
+                    blocker_id: id,
+                },
+            });
+            const blockList: User[] = [];
+            for (const element of BlocksIdList) {
+                    const block = await this.userRepository.findOne({
+                        where: { id: element.blocked_id },
+                    });
+                    const dtoUser = plainToClass(User, block);
+                    blockList.push(dtoUser);
+            }
+            return blockList;
         }
 
         async getUsersWithBlocked(blocker_id: number): Promise<User[]> {
@@ -122,18 +372,6 @@ export class UserService {
           return users;
         }
 
-        //user unblock
-        async unblockUser(unblock: IBlocked):Promise<void> {
-            const blockedRecord = await this.blockedRepository.findOneBy({ blocker_id: unblock.blocker_id, blocked_id: unblock.blocked_id });
-
-            if (blockedRecord) {
-              await this.blockedRepository.remove(blockedRecord);
-              
-              console.log("User unblocked successfully.");
-            } else {
-              console.log("User is not blocked.");
-            }
-        }
 
         
         async isFriend(userId: number, frinedId: number) {
@@ -206,12 +444,40 @@ export class UserService {
         }
 
         async getAllFriends(user_id: number){
-
+            const friendIdList = await this.friendshipRepository.find({
+                where: {
+                    user_id: user_id,
+                    friend_status:FriendStatus.ISFRIEND
+                },
+            });
+            const friendList: User[] = [];
+            for (const element of friendIdList) {
+                const friend = await this.userRepository.findOne({
+                    where: { id: element.friend_id },
+                });
+                const dtoUser = plainToClass(User, friend);
+                friendList.push(dtoUser);
+            }
+            return friendList;
         }
         
         async getAllPending(user_id: number){
 
-
+            const friendIdList = await this.friendshipRepository.find({
+                where: {
+                    user_id: user_id,
+                    friend_status:FriendStatus.FRPENDING
+                },
+            });
+            const friendList: User[] = [];
+            for (const element of friendIdList) {
+                const friend = await this.userRepository.findOne({
+                    where: { id: element.friend_id },
+                });
+                const dtoUser = plainToClass(User, friend);
+                friendList.push(dtoUser);
+            }
+            return friendList;
         }
         //user friend request
         async friendRequest(user_id: number, friend_id: number) {
@@ -315,5 +581,81 @@ export class UserService {
             await this.friendshipRepository.delete(existingFriendship1.id);
 
             return true;
+        }
+
+        async rmFriend(id: number, otherId: number){
+            const friendshipRecordCurUser = await this.friendshipRepository.findOneBy({ user_id: id, friend_id: otherId });
+            const friendshipRecordUtherUser = await this.friendshipRepository.findOneBy({ user_id: otherId, friend_id: id });
+
+            if (friendshipRecordCurUser && friendshipRecordUtherUser) {
+              await this.friendshipRepository.remove(friendshipRecordCurUser);
+              await this.friendshipRepository.remove(friendshipRecordUtherUser);
+              console.log("friend deleted successfully.");
+              return true;
+            } else {
+              console.log("User is not blocked.");
+            }
+        }
+        // async updateAccessToken(id: number, atoken: string) {                   //Do we really need it????????
+        //     await this.userRepository.update(id, {access_token: atoken});
+        // }
+
+        async updateWinRate(id: number) {
+            const user = await this.userRepository.findOneBy({id: id}); 
+            if (!user) {
+                throw new BadRequestException('Undefigned user ID');
+            }
+          
+            const winRate = user.gamesPlayed > 0 ? (user.gamesWon / user.gamesPlayed) * 100 : 0;
+            user.winRate = winRate;
+            await this.userRepository.save(user);
+        }
+
+        async hasWon(id: number) {
+            try {            
+                // Increment gamesWon and gamesPlayed by one
+                await this.userRepository.increment({ id: id }, 'gamesWon', 1);
+                await this.userRepository.increment({ id: id }, 'gamesPlayed', 1);
+            
+                // Update the win rate
+                await this.updateWinRate(id);
+            
+                return { success: true };
+              } catch (error) {
+                // Handle errors appropriately
+                return { success: false, error: 'An error occurred while updating the user.' };
+              }
+        }
+
+        async hasLost(id: number) {
+            try {            
+                // Increment gamesWon and gamesPlayed by one
+                await this.userRepository.increment({ id: id }, 'gamesLost', 1);
+                await this.userRepository.increment({ id: id }, 'gamesPlayed', 1);
+            
+                // Update the win rate
+                await this.updateWinRate(id);
+            
+                return { success: true };
+              } catch (error) {
+                // Handle errors appropriately
+                return { success: false, error: 'An error occurred while updating the user.' };
+              }
+        }
+
+        async updateRefreshToken(user_name: string, rtoken: string) {
+            await this.userRepository.update(user_name, {refresh_token: rtoken});
+        }
+
+        async updateRefreshTokenById(id: number, rtoken: string) {
+            await this.userRepository.update(id, {refresh_token: rtoken});
+        }
+
+        async updatetwoFa(user_name: string, twoFa: boolean) {
+            await this.userRepository.update(user_name, {two_factor_auth: twoFa});
+        }
+
+        async updatetwoFaSecret(user_name: string, secret: string) {
+            await this.userRepository.update(user_name, {two_factor_secret: secret});
         }
 }

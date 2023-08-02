@@ -126,15 +126,15 @@ export class ChatService {
 		return;
 	}
 
-    async getUserIdByEmail(email: string) {
-		try {
-            const user = this.userSeervice.getUserByEmail(email);
+    // async getUserIdByEmail(email: string) {
+	// 	try {
+    //         const user = this.userSeervice.getUserByEmail(email);
             
-			return (await user).id;
-		} catch (error) {
-			console.log('getUserIdByEmail error:', error);
-		}
-	}
+	// 		return (await user).id;
+	// 	} catch (error) {
+	// 		console.log('getUserIdByEmail error:', error);
+	// 	}
+	// }
 
     async getCannelName(chat_id: number) {
 		try {
