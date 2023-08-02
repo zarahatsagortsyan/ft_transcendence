@@ -301,6 +301,55 @@ export class GameService {
         };
         await from(this.gameRepository.save(game));
 
+        try {
+			const winnerId = score1 > score2 ? user1ID : user2ID;
+			const loserId = score1 > score2 ? user2ID : user1ID;
+
+			this.userService.hasWon(winnerId);
+			this.userService.hasLost(loserId);
+
+			const winner = await this.userService.getUser(winnerId)
+			const loser = await this.userService.getUser(loserId);
+
+			// update scores, should not be equal to 1200
+			const oldScores = [winner.score, loser.score];
+			const newScores = await this.userService.calculateScores(oldScores);
+			if (Math.floor(newScores[0]) === 1200) newScores[0]++;
+			if (Math.floor(newScores[1]) === 1200) newScores[0]--;
+
+            this.userService.updateGameHistoryScore(winnerId, id, newScores[0]);
+            this.userService.updateGameHistoryScore(loserId, id, newScores[1]);
+
+			// await this.prisma.user.update({
+			// 	where: {
+			// 		id: winnerId,
+			// 	},
+			// 	data: {
+			// 		score: Math.floor(newScores[0]),
+			// 		gameHistory: {
+			// 			push: id,
+			// 		},
+			// 	},
+			// });
+			// await this.prisma.user.update({
+			// 	where: {
+			// 		id: loserId,
+			// 	},
+			// 	data: {
+			// 		score: Math.floor(newScores[1]),
+			// 		gameHistory: {
+			// 			push: id,
+			// 		},
+			// 	},
+			// });
+
+            // will be added in user.service.
+			// this.userService.updateRanks();
+			return game;
+		} catch (error) {
+			throw new ForbiddenException('saveGame error : ' + error);
+		}
+
         
     }
 

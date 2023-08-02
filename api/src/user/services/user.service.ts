@@ -643,6 +643,15 @@ export class UserService {
               }
         }
 
+        async calculateScores([...ratings]) {
+            const [a, b] = ratings;
+            const expectedScore = (self, opponent) =>
+                1 / (1 + 10 ** ((opponent - self) / 400));
+            const newRating = (rating, index) =>
+                rating + 32 * (index - expectedScore(index ? a : b, index ? b : a));
+            return [newRating(a, 1), newRating(b, 0)];
+        }
+
         async updateRefreshToken(user_name: string, rtoken: string) {
             await this.userRepository.update(user_name, {refresh_token: rtoken});
         }
@@ -657,5 +666,22 @@ export class UserService {
 
         async updatetwoFaSecret(user_name: string, secret: string) {
             await this.userRepository.update(user_name, {two_factor_secret: secret});
+        }
+
+        ////SHOULD BE TESTED
+        async updateGameHistoryScore(id: number, gameID: number, score: number) {
+            const user = await this.userRepository.findOneBy({id: id});
+            if (user)
+            {
+                user.gameHistory.push(gameID);
+                user.score = Math.floor(score);
+
+                await this.userRepository.save(user);
+            }
+            else {
+                throw new Error ("User not found in updateGameHistoryScore")
+            }
+
+            // await this.userRepository.update(id, user.gameHistory.push(gameID), );
         }
 }
