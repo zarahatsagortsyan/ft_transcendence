@@ -4,49 +4,49 @@ export const getUserFriends = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("get_friends", authContent, body);
+    return fetchGet("getAllFriends", authContent, body);
   };
   
   export const addFriendQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("add_friend", authContent, body);
+    return fetchGet("friendRequest", authContent, body);
   };
   
   export const removeFriendQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("rm_friend", authContent, body);
+    return fetchGet("rmFriend", authContent, body);
   };
   
   export const blockUserQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("block_user", authContent, body);
+    return fetchGet("blockUser", authContent, body);
   };
   
   export const unblockUserQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("unblock_user", authContent, body);
+    return fetchGet("unblockUser", authContent, body);
   };
   
   export const cancelInviteQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("cancel_invite", authContent, body);
+    return fetchGet("friendRequestCancel", authContent, body);
   };
   
   export const denyInviteQuery = (otherId: number) => {
     let body = JSON.stringify({
       otherId: otherId,
     });
-    return fetchGet("deny_invite", authContent, body);
+    return fetchGet("friendRequestDecline", authContent, body);
   };
   
   const fetchGet = async (url: string, header: any, body: any) => {

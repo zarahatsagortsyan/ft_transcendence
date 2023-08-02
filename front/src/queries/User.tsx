@@ -1,11 +1,11 @@
 import { auth } from './headers'
 
 export const getUserBlocked = () => {
-    return fetchGet("get_blocked", storeFriendsInfo);
+    return fetchGet("getBlocked", storeFriendsInfo);
   };
   
   export const getUserPending = () => {
-    return fetchGet("get_pending", storeFriendsInfo);
+    return fetchGet("getAllPending", storeFriendsInfo);
   };
   
   export const getUserData = () => {
@@ -13,11 +13,13 @@ export const getUserBlocked = () => {
   };
   
   export const getLeaderBoard = () => {
-    return fetchGet("get_leaderboard", storeLeaderBoardInfo);
+    return fetchGet("getLeaderboard", storeLeaderBoardInfo);
   };
   
   const fetchGet = async (url: string, callback: any) => {
-    let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/users/" + url;
+    console.log('back_rl',process.env.BACK_URL);
+    let fetchUrl = 'http://localhost:3001' + "/users/" + url;
+    console.log(fetchUrl);
     try {
       const response = await fetch(fetchUrl, {
         method: "GET",
@@ -37,13 +39,14 @@ export const getUserBlocked = () => {
   
   export const storeUserInfo = (result: any) => {
     localStorage.setItem("userID", result.id);
-    localStorage.setItem("userName", result.username);
-    localStorage.setItem("userEmail", result.email);
+    localStorage.setItem("userName", result.user_name);
+    // localStorage.setItem("userEmail", result.email);
     localStorage.setItem("userPicture", result.avatar);
     localStorage.setItem("userGamesWon", result.gamesWon);
     localStorage.setItem("userGamesLost", result.gamesLost);
     localStorage.setItem("userGamesPlayed", result.gamesPlayed);
     localStorage.setItem("userAuth", result.twoFA);
+
   };
   
   export const storeFriendsInfo = (result: any) => {

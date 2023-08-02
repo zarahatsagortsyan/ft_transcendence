@@ -9,7 +9,7 @@ import { IFriendship } from '../models/friendship.interface';
 import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
 import { isNumber, isNumberString } from 'class-validator';
 
-@Controller('user')
+@Controller('users')
 
 export class UserController {
     logger = new Logger('AppController');
@@ -17,6 +17,7 @@ export class UserController {
     
     @Get('getMe')
 	getMe(@GetCurrentUserId() id: number) {
+		console.log(121321321321);
         console.log("getMe");
 		this.logger.log('get current user');
 		const userDto = this.userService.getUser(id);
