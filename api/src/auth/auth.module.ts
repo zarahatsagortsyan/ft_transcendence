@@ -10,10 +10,15 @@ import { AuthService } from './auth.service';
 import { FortyTwoStrategy } from './strategies/42.strategy';
 import { TwoFaService } from './2fa/2fa.service';
 import { TwoFAController } from './2fa/2fa.controller';
-
+import { UserService } from 'src/user/services/user.service';
+import { User } from 'src/user/models/user.entity';
+import { JwtGuard } from './guard/jwt.guard';
+import { jwtStrategy } from './strategies/jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
     imports: [
         JwtModule.register({}),
+        TypeOrmModule.forFeature([User]),
 		forwardRef(() => AppModule),
 		forwardRef(() => UserModule),
 		// forwardRef(() => ChatModule),
@@ -21,7 +26,12 @@ import { TwoFAController } from './2fa/2fa.controller';
 		forwardRef(() => HttpModule),
     ],
     controllers: [AuthController, TwoFAController],
-    providers: [AuthService, FortyTwoStrategy, TwoFaService],
+    providers: [AuthService, 
+                FortyTwoStrategy,
+                JwtGuard,
+                jwtStrategy,
+                TwoFaService,
+                User],
     exports: [AuthService],
 })
 export class AuthModule {}

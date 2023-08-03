@@ -17,13 +17,22 @@ import { BlockedList } from "./routes/Profile/Private/Relations/Blocked";
 import { FriendsList } from "./routes/Profile/Private/Relations/Friends";
 import { PendingList } from "./routes/Profile/Private/Relations/Pending";
 import UserPublicProfile from "./routes/Profile/Public/PublicProfile";
+import { CNavBar } from "./Components/Navbar";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   <AuthProvider>
     <BrowserRouter>
+    {/* <CNavBar/> */}
+    <div>
       <Routes>
+      {/* <Route
+      element={
+                
+                  <CNavBar />
+              }
+      /> */}
         <Route path="/" element={<App />}>
           <Route index element={<Navigate to="/auth/signin" />} />
           <Route path="2FA" element={<TwoFAValidation />} />
@@ -44,9 +53,9 @@ root.render(
           <Route
             path="app"
             element={
-              <RequireAuth>
+              // <RequireAuth>
                 <UserInterface />
-              </RequireAuth>
+              // </RequireAuth>
             }
           >
             <Route index element={<UserPrivateProfile />} />
@@ -73,6 +82,7 @@ root.render(
           <Route path="*" element={<Navigate to="/auth/signin" />} />
         </Route>
       </Routes>
+      </div>
     </BrowserRouter>
   </AuthProvider>
 );

@@ -19,6 +19,10 @@ import { RedirectOnLogin } from './filter/redirect';
 import { TwoFaService } from './2fa/2fa.service';
 import { GetCurrentUser } from 'src/decorator/get-current-user-decorator';
 import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
+import { log } from 'console';
+import { Public } from 'src/decorator/public.decorator';
+import { RtGuard } from './guard/rt.guard';
+import { ApiResponse } from '@nestjs/swagger';
 
 
 @Controller('auth')
@@ -35,6 +39,7 @@ export class AuthController {
 		// console.log(req);
 
 		const user = await this.authService.signin42(req.user as AuthUserDto);
+		console.log('oooooooo:', req.user); 
 		const { user_name, id, two_factor_auth } = user;
 		
 		console.log('callback method from auth controller' + user_name + '  ' + id);
@@ -44,15 +49,38 @@ export class AuthController {
 		return this.authService.signin42_token(res, user_name, id);
 	}
 
+	// @Post('logout')
+	// @HttpCode(200)
+	// // @ApiResponse({ status: 401, description: 'Unauthorized' })
+	// logout(
+	// 	@GetCurrentUser('user_name') user_name: string,
+	// ) {
+	// 	return this.authService.signout(user_name);
+	// }
+
 	@Post('logout')
 	@HttpCode(200)
-	// @ApiResponse({ status: 401, description: 'Unauthorized' })
+	@ApiResponse({ status: 401, description: 'Unauthorized' })
 	logout(
-		@GetCurrentUser('user_name') user_name: string,
+		@GetCurrentUserId() userId: number,
+		// @GetCurrentUser('username') username: string,
 	) {
-		return this.authService.signout(user_name);
+		// LOG
+		console.log("Vay de ara");
+		// this.logger.log('User logout ' + username);
+		return this.authService.signout(userId);
 	}
 
+	@Public()
+	// @UseGuards(RtGuard)
+	@HttpCode(200)
+	@Post('/refresh')
+	refresh(
+		@GetCurrentUserId() userId: number,
+		@GetCurrentUser('refreshToken') refreshToken: string,
+	) {
+		return this.authService.refresh_token(userId, refreshToken);
+	}
 	// @Public()
 	// @UseGuards(RtGuard)
 // 	@HttpCode(200)

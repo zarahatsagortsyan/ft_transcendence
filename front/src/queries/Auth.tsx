@@ -68,8 +68,8 @@ export const logOut = () => {
 };
 
 const fetchPostLogout = async () => {
-  let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/logout";
-
+  //let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/logout";
+  let fetchUrl = "http://localhost:3001"+ "/auth/logout";
   try {
     const response = await fetch(fetchUrl, {
       method: "POST",

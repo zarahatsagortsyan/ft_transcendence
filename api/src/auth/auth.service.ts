@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Res } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Res, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { AppGateway } from 'src/app.gateway';
@@ -17,6 +17,8 @@ export class AuthService {
 		private readonly jwtService: JwtService,
         private readonly appGateway: AppGateway,
 		private readonly userService: UserService,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
     ) {}
     
     async signin42(dto: AuthUserDto) : Promise<User> {
@@ -62,6 +64,7 @@ export class AuthService {
 
         res.status(302).redirect(url.href);
         console.log("Auth-i verjjjjjjjjjjjjjjjjjj\n");
+        // console.log(res);
 		return res;
     }
 
@@ -96,9 +99,10 @@ export class AuthService {
     //     this.userService.updateRefreshToken(user_name, hash);
     // }
 
-    async signout(user_name: string){
+    async signout(id: number){
 		// delete refresh token (log out)
-        this.userService.updateRefreshToken(user_name, '') //had to be null?
+        this.userService.updateRefreshTokenById(id, '') //had to be null?
+        console.log("We are signing out losers.")
 		// await this.prisma.user.updateMany({
 		// 	where: {
 		// 		id: userId,
@@ -113,9 +117,48 @@ export class AuthService {
 		// 	},
 		// });
 		//sending status update to the front
-		this.appGateway.offlineFromService((await this.userService.getUserByUsername(user_name)).id);
+        console.log(id);
+		this.appGateway.offlineFromService(id);
 	}
-
+	// async signout(userId: number): Promise<void> {
+    //     await this.userRepository
+    //     .createQueryBuilder()
+    //     .update(User)
+    //     .set({ refresh_token: null })
+    //     .where('id = :userId', { userId })
+    //     .andWhere('refresh_token IS NOT NULL')
+    //     .execute();
+	// 	this.appGateway.offlineFromService(userId);
+	// }
+    
+	/* REFRESH TOKEN */
+	async refresh_token(
+		userId: number,
+		refreshToken: string,
+	): Promise<AuthTokenDto> {
+		// Find user by id
+		const user = await this.userRepository.findOne({
+			where: {
+				id: userId,
+			},
+		});
+		// Check if user exists and is logged in
+		if (!user || !user.refresh_token)
+			// throw 403 error
+			throw new ForbiddenException('Invalid Credentials');
+		// Verify hashed Refresh Token
+		const pwMatches = await argon.verify(user.refresh_token, refreshToken);
+		// Invalid refresh token
+		if (!pwMatches)
+			// throw 403 error
+			throw new ForbiddenException('Invalid Credentials');
+		// Generate new tokens
+        const tokens = await this.signin_jwt(user.user_name, user.id);
+		// Update Refresh Token - if user is logged in and valid
+		await this.updateRefreshToken(user.id, tokens.refresh_token);
+		// return tokens
+		return tokens;
+	}
     // async refresh_token(user_name: string, rtoken: string) : Promise<AuthTokenDto>
     // {
     //     const user = await this.userService.getUserByUsername(user_name);

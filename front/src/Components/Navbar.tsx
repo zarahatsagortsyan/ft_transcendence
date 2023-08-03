@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../globals/contexts";
 import { MLogoutValid } from "../Models/Logout";
+import "./Navbar.css";
 
 const GetIcons = (props: any) => {
   const navigate = useNavigate();

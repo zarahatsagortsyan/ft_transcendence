@@ -23,7 +23,7 @@ import configg from './ormconfig';
         type: 'postgres',
         host: process.env.POSTGRES_HOST,
         port: parseInt(<string> process.env.POSTGRES_PORT),
-        username: process.env.POSTGRES_USE,
+        username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
         database: process.env.POSTGRES_DATABASE,
         autoLoadEntities: true,

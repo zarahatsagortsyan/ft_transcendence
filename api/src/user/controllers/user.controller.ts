@@ -17,9 +17,9 @@ export class UserController {
     
     @Get('getMe')
 	getMe(@GetCurrentUserId() id: number) {
-		console.log(121321321321);
-        console.log("getMe");
-		this.logger.log('get current user');
+		// console.log(121321321321);
+        // console.log("getMe");
+		// this.logger.log('get current user');
 		const userDto = this.userService.getUser(id);
 		return userDto;
 	}
