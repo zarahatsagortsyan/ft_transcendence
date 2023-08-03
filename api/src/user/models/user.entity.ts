@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable,Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne, OneToMany, JoinTable,Unique } from "typeorm";
 import { IsNotEmpty, IsString, IsNumber, MaxLength } from 'class-validator';
+import { Chat } from "src/chat/models/chat.entity";
+import { Message } from "src/chat/models/message.entity";
 
 export enum UserStatus {
     ONLINE = 'online',
@@ -79,4 +81,22 @@ export class User {
     winRate: number;
     @Column({ type: 'integer', array: true, default: [] })
     gameHistory: number[];
+
+    @OneToMany(() => Chat, chat => chat.owner)
+    ownedChats: Chat[];
+
+    @ManyToMany(() => Chat, chat => chat.admins)
+    adminChats: Chat[];
+
+    @ManyToMany(() => Chat, chat => chat.members)
+    memberChannels: Chat[];
+
+    @ManyToMany(() => Chat, chat => chat.inviteds)
+    invitedChannels: Chat[];
+
+    @ManyToMany(() => Chat, chat => chat.blocked)
+    blockedChannels: Chat[];
+
+    @OneToMany(() => Message, msg => msg.owner)
+    userMessages: Message[];
 }
