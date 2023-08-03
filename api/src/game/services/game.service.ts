@@ -6,7 +6,7 @@ import {
     BadRequestException
 } from '@nestjs/common';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 import { Game } from '../models/game.entity';
 import { IGame } from '../models/game.interface';
 import { Observable, from } from 'rxjs';
@@ -16,6 +16,7 @@ import { Room } from '../models/room.interface';
 import { Mutex } from 'async-mutex';
 import { GameData } from '../models/gameData.interface'
 import { Server } from 'socket.io';
+import { User } from 'src/user/models/user.entity';
 
 const refreshRate = 10
 const paddleSpeed = 1
@@ -163,7 +164,6 @@ export class GameService {
                 .paddleRight +
             11
         ) {
-            // ball radius is 1vh
             GameService.rooms.find((room) => room.id === roomID).xball =
                 97 - 2 / 1.77;
             GameService.rooms.find(
@@ -293,15 +293,41 @@ export class GameService {
 
     async saveGame(id: number, user1ID: number, user2ID: number, score1: number, score2: number) {
         const game: IGame = {
-            id: id,
+            id,
             player1: user1ID,
             player2: user2ID,
-            score1: score1,
-            score2: score2,
+            score1,
+            score2,
         };
+        // const userRepository = getRepository(User)
         await from(this.gameRepository.save(game));
 
-        
+        try {
+            const winnerId = score1 > score2 ? user1ID : user2ID;
+            const loserId = score1 > score2 ? user2ID : user1ID;
+
+            this.userService.hasWon(winnerId);
+            this.userService.hasLost(loserId);
+
+            const winner = await this.userService.getUser(winnerId)
+            const loser = await this.userService.getUser(loserId);
+
+            // update scores, should not be equal to 1200
+            const oldScores = [winner.score, loser.score];
+            const newScores = await this.userService.calculateScores(oldScores);
+            if (Math.floor(newScores[0]) === 1200) newScores[0]++;
+            if (Math.floor(newScores[1]) === 1200) newScores[0]--;
+
+
+            this.userService.updateGameHistoryScore(winnerId, id, newScores[0]);
+            this.userService.updateGameHistoryScore(loserId, id, newScores[1]);
+
+            // will be added in user.service.
+            this.userService.updateRanks();
+            return game;
+        } catch (error) {
+            throw new ForbiddenException('saveGame error : ' + error);
+        }
     }
 
     async getGame(game_id: number) {
@@ -339,13 +365,37 @@ export class GameService {
             return id;
         return this.generate_new_id();
     }
-    // async getLastGames() {
-    //     //returns a record of all the users, ordered by endTime in descending order
-    //     const games = await this.prisma.game.findMany({
-    //         orderBy: { endTime: 'desc' },
-    //     });
 
-    //     return games;
-    // }
+    getGameList(): GameData[] {
+		const list: GameData[] = [];
+		for (const room of GameService.rooms) {
+			if (room.player2) {
+				const data: GameData = {
+					player1Name: room.player1Name,
+					player2Name: room.player2Name,
+					player1Avatar: room.player1.data.id,
+					player2Avatar: room.player2.data.id,
+					player1Score: room.player1Score,
+					player2Score: room.player2Score,
+					gameID: room.id,
+				};
+				list.push(data);
+			}
+		}
+		return list;
+	}
+
+    //////???????
+    async getLastGames() {
+        // const games = await this.prisma.game.findMany({
+        //     orderBy: { endTime: 'desc' },
+        // });
+
+        const games = await this.gameRepository.find({
+            order: { id: 'DESC' },
+        });
+
+        return games;
+    }
 
 }
