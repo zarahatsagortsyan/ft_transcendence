@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, from } from 'rxjs';
 import { Message } from '../models/message.entity';
-import { IMessage } from '../models/message.interface';
+import { IMessage } from '../interfaces/message.interface';
 
 @Injectable()
 export class MessageService {
