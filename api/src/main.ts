@@ -18,7 +18,7 @@ async function bootstrap() {
 			whitelist: true,
 		}),
 	);
-  // // 	// set JwtGuard as a global guard
+  // 	// set JwtGuard as a global guard
 	const reflector = new Reflector();
 	app.useGlobalGuards(new JwtGuard(reflector));
 

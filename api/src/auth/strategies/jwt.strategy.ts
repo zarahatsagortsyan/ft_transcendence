@@ -30,13 +30,19 @@ export class jwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 	 * Validate function used by Passport Module
 	 */
 	async validate(data: { user_name:string, id:number, is2FA: boolean }) {
-        const user = await this.userRepository.findOneOrFail({
+        
+        const user = await this.userRepository.findOne({
             where: {
                 id: data.id,
             },
         });
+        if(!user)
+            return;
 		// if user is logged out return 401
+        console.log("---------------jwtStrategy validate------------");
 		if (!user.refresh_token) return;
+        console.log("---------------jwtStrategy validate1------------");
+
 		// remove sensitive data
 		if (user) delete user.refresh_token;
 		// if the user is not found user == NULL

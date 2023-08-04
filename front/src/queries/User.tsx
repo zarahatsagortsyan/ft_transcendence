@@ -21,6 +21,8 @@ export const getUserBlocked = () => {
     let fetchUrl = 'http://localhost:3001' + "/users/" + url;
     console.log(fetchUrl);
     try {
+      console.log('auth()', auth());
+      console.log('sdfsdfsdf', fetchUrl);
       const response = await fetch(fetchUrl, {
         method: "GET",
         headers: auth(),
@@ -28,6 +30,7 @@ export const getUserBlocked = () => {
         redirect: "follow",
       });
       const result_1 = await response.json();
+      console.log(response);
       if (!response.ok) {
         return "error";
       }

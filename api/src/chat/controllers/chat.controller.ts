@@ -9,28 +9,28 @@ import { IMessage } from '../models/message.interface';
 export class ChatController {
     constructor(private chatService: ChatService) {}
 
-    // @Post('removeChat')
-    // removeChat(@Query('owner_id') owner_id: number,@Query('chat_id') chat_id: number) {
-    //     return this.chatService.deleteChat(owner_id, chat_id);
-    // }
-    // // @Post('createChat')
-    // // createChat(@Body('') chat: IChat) : Observable<IChat> {
-    // //     return this.chatService.createChat(chat);
-    // // }
-    // @Post('changePass')
-    // changePass(@Query('owner_id') owner_id: number, @Query('chat_id') chat_id: number,
-    //             @Query('old_pass') old_pass: string, @Query('new_pass') new_pass: string) {
-    //     return this.chatService.changePass(owner_id, chat_id, old_pass, new_pass);
-    // }
-    // @Post('changeMode')
-    // changeMode(@Query('owner_id') owner_id: number, @Query('chat_id') chat_id: number,
-    //             @Query('mode') mode: ChatMode) {
-    //     return this.chatService.changeMode(owner_id, chat_id, mode);
-    // }
-    // @Get('listUsers')
-    // listUsers(@Query('chat_id') chat_id: number) {
-    //     return this.chatService.listUsers(chat_id);
-    // }
+    @Post('removeChat')
+    removeChat(@Query('owner_id') owner_id: number,@Query('chat_id') chat_id: number) {
+        return this.chatService.deleteChat(owner_id, chat_id);
+    }
+    @Post('createChat')
+    createChat(@Body('') chat: IChat) : Observable<IChat> {
+        return this.chatService.createChat(chat);
+    }
+    @Post('changePass')
+    changePass(@Query('owner_id') owner_id: number, @Query('chat_id') chat_id: number,
+                @Query('old_pass') old_pass: string, @Query('new_pass') new_pass: string) {
+        return this.chatService.changePass(owner_id, chat_id, old_pass, new_pass);
+    }
+    @Post('changeMode')
+    changeMode(@Query('owner_id') owner_id: number, @Query('chat_id') chat_id: number,
+                @Query('mode') mode: ChatMode) {
+        return this.chatService.changeMode(owner_id, chat_id, mode);
+    }
+    @Get('listUsers')
+    listUsers(@Query('chat_id') chat_id: number) {
+        return this.chatService.listUsers(chat_id);
+    }
     
     // @Post('sendDM')
     // sendDM(@Body('') message: IMessage) {

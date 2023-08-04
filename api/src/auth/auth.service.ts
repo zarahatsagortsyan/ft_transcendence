@@ -64,7 +64,7 @@ export class AuthService {
 
         res.status(302).redirect(url.href);
         console.log("Auth-i verjjjjjjjjjjjjjjjjjj\n");
-        // console.log(res);
+        console.log(res);
 		return res;
     }
 
@@ -99,37 +99,44 @@ export class AuthService {
     //     this.userService.updateRefreshToken(user_name, hash);
     // }
 
-    async signout(id: number){
-		// delete refresh token (log out)
-        this.userService.updateRefreshTokenById(id, '') //had to be null?
-        console.log("We are signing out losers.")
-		// await this.prisma.user.updateMany({
-		// 	where: {
-		// 		id: userId,
-		// 		hashedRtoken: {
-		// 			// eslint-disable-next-line unicorn/no-null
-		// 			not: null,
-		// 		},
-		// 	},
-		// 	data: {
-		// 		// eslint-disable-next-line unicorn/no-null
-		// 		hashedRtoken: null,
-		// 	},
-		// });
-		//sending status update to the front
-        console.log(id);
-		this.appGateway.offlineFromService(id);
-	}
-	// async signout(userId: number): Promise<void> {
-    //     await this.userRepository
-    //     .createQueryBuilder()
-    //     .update(User)
-    //     .set({ refresh_token: null })
-    //     .where('id = :userId', { userId })
-    //     .andWhere('refresh_token IS NOT NULL')
-    //     .execute();
-	// 	this.appGateway.offlineFromService(userId);
+    //  async signout(user_name: string){
+	// 	// delete refresh token (log out)
+    //     this.userService.updateRefreshToken(user_name, '') //had to be null?
+	// 	// await this.prisma.user.updateMany({
+	// 	// 	where: {
+	// 	// 		id: userId,
+	// 	// 		hashedRtoken: {
+	// 	// 			// eslint-disable-next-line unicorn/no-null
+	// 	// 			not: null,
+	// 	// 		},
+	// 	// 	},
+	// 	// 	data: {
+	// 	// 		// eslint-disable-next-line unicorn/no-null
+	// 	// 		hashedRtoken: null,
+	// 	// 	},
+	// 	// });
+	// 	//sending status update to the front
+	// 	this.appGateway.offlineFromService((await this.userService.getUserByUsername(user_name)).id);
 	// }
+	async signout(userId: number): Promise<void> {
+       console.log("signout(userId: number): Promise<void>") 
+       this.userService.updateRefreshTokenById(userId, '') //had to be null?
+    //    try{
+    //         await this.userRepository
+    //         .createQueryBuilder()
+    //         .update(User)
+    //         .set({ refresh_token: '' })
+    //         .where('id = :userId', { userId })
+    //         .andWhere('refresh_token IS NOT NULL')
+    //         .execute();   
+    //    }
+    //    catch(error)
+    //    {
+    //        console.log (error)
+    //    }
+
+		this.appGateway.offlineFromService(userId);
+	}
     
 	/* REFRESH TOKEN */
 	async refresh_token(

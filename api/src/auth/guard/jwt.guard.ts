@@ -12,15 +12,15 @@ export class JwtGuard extends AuthGuard('jwt') {
 		super();
 	}
 	// Validate function
-	// canActivate(context: ExecutionContext) {
-	// 	// Get metadata from context
-	// 	const isPublic = this.reflector.getAllAndOverride('isPublic', [
-	// 		context.getHandler(),
-	// 		context.getClass(),
-	// 	]);
-	// 	// if the route is public, return true
-	// 	if (isPublic) return true;
-	// 	// if the route is not public - pass to JwtGuard
-	// 	return super.canActivate(context);
-	// }
+	canActivate(context: ExecutionContext) {
+		// Get metadata from context
+		const isPublic = this.reflector.getAllAndOverride('isPublic', [
+			context.getHandler(),
+			context.getClass(),
+		]);
+		// if the route is public, return true
+		if (isPublic) return true;
+		// if the route is not public - pass to JwtGuard
+		return super.canActivate(context);
+	}
 }

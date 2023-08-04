@@ -1,4 +1,5 @@
 import { Controller, Post, Get, Body, Query, ForbiddenException } from '@nestjs/common';
+import { UserService } from '../services/user.service';
 import { IUser } from '../models/user.interface';
 import { Observable } from "rxjs";
 import { IBlocked } from '../models/blocked.interface';
@@ -7,7 +8,6 @@ import { User } from '../models/user.entity';
 import { IFriendship } from '../models/friendship.interface';
 import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
 import { isNumber, isNumberString } from 'class-validator';
-import { UserService } from '../services/user.service';
 
 @Controller('users')
 
@@ -17,9 +17,9 @@ export class UserController {
     
     @Get('getMe')
 	getMe(@GetCurrentUserId() id: number) {
-		// console.log(121321321321);
-        // console.log("getMe");
-		// this.logger.log('get current user');
+		console.log(121321321321);
+        console.log("getMe");
+		this.logger.log('get current user');
 		const userDto = this.userService.getUser(id);
 		return userDto;
 	}

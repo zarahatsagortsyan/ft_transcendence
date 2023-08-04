@@ -19,8 +19,12 @@ export const RequireAuth = ({ children }: { children: JSX.Element }) => {
   const auth = useAuth();
   const location = useLocation();
 
-  if (localStorage!.getItem("userLogged")! === "true")
+  // console.log('---------------------RequireAuth-----------------');
+  if (localStorage!.getItem("userLogged")! === "true"){
+    console.log('---------------------RequireAuth-----------------');
+  console.log(localStorage.getItem("userName"));
     auth.signin(localStorage.getItem("userName"), () => {});
+  }
   else return <Navigate to="/auth/signin" state={{ from: location }} replace />;
   return children;
 };
@@ -37,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signout = (callback: VoidFunction) => {
+    console.log("signout = (callback: VoidFunction)")
     return fakeAuthProvider.signout(() => {
       const postLogout = async () => {
         const result = await logOut();

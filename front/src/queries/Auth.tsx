@@ -10,9 +10,10 @@ const fetchPost = async (
   userSignIn: any,
   url: string
 ) => {
-  let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/" + url;
-
+  // let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/" + url;
+  let fetchUrl = 'http://localhost/3001' + "/auth/" + url;
   try {
+    console.log('Auth.ts fetchUrl: ', fetchUrl);
     const response = await fetch(fetchUrl, {
       method: "POST",
       headers: myHeaders,
@@ -69,13 +70,16 @@ export const logOut = () => {
 
 const fetchPostLogout = async () => {
   //let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/logout";
-  let fetchUrl = "http://localhost:3001"+ "/auth/logout";
+  let fetchUrl = "http://localhost:3001" + "/auth/logout"
+
   try {
+    console.log("auth()", auth());
     const response = await fetch(fetchUrl, {
       method: "POST",
       headers: auth(),
       redirect: "follow",
     });
+    console.log(response);
     const result_1 = await response.text();
     if (!response.ok) {
       console.log("POST error on logout");

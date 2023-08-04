@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../globals/contexts";
 import { MLogoutValid } from "../Models/Logout";
 import "./Navbar.css";
-
 const GetIcons = (props: any) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +30,7 @@ const GetIcons = (props: any) => {
         onHide={() => setModalShow(false)}
         onSubmit={() => {
           setModalShow(false);
+          console.log('MLogoutValid');
           auth.signout(() => navigate("/auth/signin"));
         }}
       />

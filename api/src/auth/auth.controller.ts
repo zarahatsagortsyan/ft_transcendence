@@ -31,6 +31,8 @@ export class AuthController {
 		private authService: AuthService,
 		private twofaService: TwoFaService,
 	) { }
+
+	@Public()
 	@UseGuards(AuthGuard('42auth'))
 	@UseFilters(RedirectOnLogin)
 	@Get('/callback')
@@ -66,13 +68,14 @@ export class AuthController {
 		// @GetCurrentUser('username') username: string,
 	) {
 		// LOG
-		console.log("Vay de ara");
 		// this.logger.log('User logout ' + username);
+		console.log("--------------auth/logout------------");
+		console.log("userID",userId);
 		return this.authService.signout(userId);
 	}
 
 	@Public()
-	// @UseGuards(RtGuard)
+	@UseGuards(RtGuard)
 	@HttpCode(200)
 	@Post('/refresh')
 	refresh(
