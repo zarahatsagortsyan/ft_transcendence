@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getLeaderBoard } from "../queries/User";
 import { getUserAvatarQuery } from "../queries/Avatar";
 import { useNavigate } from "react-router-dom";
-
+import "./LeaderBoard.css"
 type gameRecord = {
     id: number;
     rank: number;

@@ -31,7 +31,8 @@ const authFileHeader = () => {
     header: any,
     url: string
   ) => {
-    let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/upload/" + url;
+    //let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/upload/" + url;
+    let fetchUrl = "http://localhost:3001" + "/upload/" + url;
   
     let requestOptions: RequestInit | undefined;
     if (method === "POST")

@@ -46,9 +46,9 @@ export class AuthController {
 		
 		console.log('callback method from auth controller' + user_name + '  ' + id);
 		// console.log(this.authService.signin42_token(res, user_name, id));
-		// return two_factor_auth ? this.twofaService.signin_2fa(res, user_name) :
-		// 	this.authService.signin42_token(res, user_name, id);
-		return this.authService.signin42_token(res, user_name, id);
+		return two_factor_auth ? this.twofaService.signin_2fa(res, user_name) :
+			this.authService.signin42_token(res, user_name, id);
+		// return this.authService.signin42_token(res, user_name, id);
 	}
 
 	// @Post('logout')

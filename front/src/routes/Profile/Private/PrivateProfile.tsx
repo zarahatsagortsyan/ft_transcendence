@@ -8,7 +8,7 @@ import { ModifyEntry } from "./UserInfo";
 import { TwoFA } from "./TwoFAQ";
 import { UsersRelations } from "./Relations/UsersRelations";
 import { COnUserSimple } from "../../../User/SimpleUser";
-
+import "../Profiles.css";
 export default function UserPrivateProfile() {
   const navigate = useNavigate();
 

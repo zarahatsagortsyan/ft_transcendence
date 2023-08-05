@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
-import "./index.css";
 
 import Game from "./routes/Game";
 import Auth from "./routes/Auth/Auth";
@@ -17,6 +16,7 @@ import { BlockedList } from "./routes/Profile/Private/Relations/Blocked";
 import { FriendsList } from "./routes/Profile/Private/Relations/Friends";
 import { PendingList } from "./routes/Profile/Private/Relations/Pending";
 import UserPublicProfile from "./routes/Profile/Public/PublicProfile";
+import "./index.css";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);

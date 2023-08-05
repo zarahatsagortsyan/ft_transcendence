@@ -15,4 +15,4 @@ export class MessageService {
     createMessage(message: IMessage) : Observable<Message> {
         return from(this.messageRepository.save(message));
     }
-}
+}   

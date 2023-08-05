@@ -50,7 +50,9 @@ export const getUserFriends = (otherId: number) => {
   };
   
   const fetchGet = async (url: string, header: any, body: any) => {
-    let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/users/" + url;
+    //let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/users/" + url;
+    let fetchUrl = "http://localhost:3001" + "/users/" + url;
+
     try {
       const response = await fetch(fetchUrl, {
         method: "POST",

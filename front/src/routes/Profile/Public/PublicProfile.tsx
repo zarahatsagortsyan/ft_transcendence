@@ -10,7 +10,7 @@ import { COnUser } from "../../../User/OnUser";
 import { renderTooltip } from "../../../Components/SimpleTool";
 import { NotifCxt, UsersStatusCxt } from "../../../App";
 import { addFriendQuery } from "../../../queries/Friends";
-
+import "./PublicProfile.css";
 const userInfoInit: userModel = {
   id: 0,
   username: "",

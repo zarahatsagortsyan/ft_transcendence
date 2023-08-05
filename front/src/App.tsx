@@ -1,13 +1,12 @@
 import { Outlet } from "react-router-dom";
-// import "bootstrap/dist/css/bootstrap.min.css";
 import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import './App.css';
 import { TAlert } from "./Alert/Alert";
 import { INotifCxt, IUserStatus } from "./globals/Interfaces";
-
 import { GameRequestCard } from "./routes/Gamerequest";
 import { gameInvitation } from "./routes/Chat/TypeofChannel";
+import "bootstrap/dist/css/bootstrap.min.css";
+import './App.css';
 
 let LoginStatus = {
   islogged: false,
@@ -33,6 +32,8 @@ const socketOptions = {
 };
 
 export const socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, socketOptions);
+// export const socket = io("ws://localhost:3001", socketOptions);
+
 
 export default function App() {
   console.log("I AM HEREEEEEEEEE");

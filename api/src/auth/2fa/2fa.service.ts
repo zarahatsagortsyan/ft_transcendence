@@ -35,13 +35,23 @@ export class TwoFaService {
 
     async turn_on(twoFacode: any, user: TwoFaDto) {
 		// destructure data
-		const {twoFasecret, user_name, id } = user;
+		const {user_name, id } = user;
 		// Check is 2FA code is valid
+		console.log("Before verifying2FACode");
+		console.log("twoFacode: " + twoFacode);
+		console.log("user_name: " + user_name);
+		
+		
+		const twoFasecret = (await this.userService.getUser(id)).two_factor_secret;
+		console.log("TwoFaSecret oaooaa: " + twoFasecret);
 		const isValid = await this.verify2FAcode(twoFacode, twoFasecret);
+		console.log("en booleany: " + isValid);
+		
 		// If invalid, throw error 401
 		if (!isValid) throw new UnauthorizedException('Invalid 2FA code');
+		console.log("Before updating twoFA");
 
-		this.userService.updatetwoFa(user_name, true);
+		this.userService.updatetwoFa(id, true);
         // await this.userRepository.update(user_name, {two_factor_auth: true} );
 
 		// Enable 2FA for user (add method to user module ?)
@@ -49,6 +59,7 @@ export class TwoFaService {
 		// 	where: { email: email },
 		// 	data: { twoFA: true },
 		// });
+		console.log("Signing jwt");
 		const tokens = await this.authservice.signin_jwt(user_name, id, true);
 		return tokens;
 	}
@@ -61,7 +72,7 @@ export class TwoFaService {
 		// });
 
 
-		this.userService.updatetwoFa(user_name, true);
+		this.userService.updatetwoFa(id, false);
         // this.userRepository.update(user_name, {two_factor_auth: true} );
 
 		const tokens = await this.authservice.signin_jwt(user_name, id);
@@ -69,13 +80,16 @@ export class TwoFaService {
 	}
 
     async verify2FAcode(code: string, twoFAsecret: string) {
+		console.log("mi hat 1l oaoaao: " + twoFAsecret);
+		console.log("mi hat 1l oaoaao code-i hamar: " + code);
+		
 		return authenticator.verify({
 			token: code,
 			secret: twoFAsecret,
 		});
 	}
 
-    async generate2FA(user_name: string) {
+    async generate2FA(user_name:string, id: number) {
 		// Generate a 2FA secret
 		const secret = authenticator.generateSecret();
 		// Create a URL for the QR code
@@ -89,12 +103,10 @@ export class TwoFaService {
 		// 	where: { email: email },
 		// 	data: { twoFAsecret: secret },
 		// });
-
-
-		this.userService.updatetwoFaSecret(user_name, secret);
-        // await this.userRepository.update(user_name, {two_factor_secret: secret})
-
-
+		console.log("generate2FA, update-ic araj");
+		console.log("generate2FA, secret" + secret);
+		
+		this.userService.updatetwoFaSecret(id, secret);
 		return {
 			secret,
 			onetimepathurl,
@@ -103,6 +115,32 @@ export class TwoFaService {
 
     async generate2FAQRCode(onetimepathurl: string) {
 		// Generate a QR code from the URL
+		console.log("Generating 2FA Qr code\n");
+		
 		return toDataURL(onetimepathurl);
+	}
+
+	/* Authenticate signin using 2FA */
+	async authenticate(dto: TwoFaDto) {
+		// destructure dto
+		const {user_name, twoFacode, id} = dto;
+
+		const user = this.userService.getUser(id);
+		if (!user) {
+			throw new UnauthorizedException('Invalid User');
+		}
+		
+		// const {two_factor_secret} = user;
+
+		const twoFasecret = (await this.userService.getUser(id)).two_factor_secret;
+
+		const isValidCode = await this.verify2FAcode(twoFacode, twoFasecret);
+		console.log("ARE YOU?");
+		if (!isValidCode) {
+			throw new UnauthorizedException('Invalid 2FA code');
+		}
+		const tokens = await this.authservice.signin_jwt(user_name, id, true);
+		await this.authservice.updateRefreshToken(id, tokens.refresh_token);
+		return tokens;
 	}
 }

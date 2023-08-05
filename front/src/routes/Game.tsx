@@ -6,7 +6,7 @@ import { getUserAvatarQuery } from '../queries/Avatar';
 import { socket as chatSocket } from '../App';
 import { Navigate } from 'react-router-dom';
 import { NotifCxt } from '../App';
-
+import "./Game.css";
 class Settings extends React.Component <SettingsProps, SettingsState> {
   
   constructor(props: SettingsProps){
@@ -219,6 +219,8 @@ export default class Game extends React.Component<PropsPong, StatePong> {
       avatarP2URL: "",
       redirectChat: false,
     };
+    // if (this.props.pvtGame === false) 
+    //   this.socket = io("ws://localhost:3001", this.socketOptions);
     if (this.props.pvtGame === false) 
       this.socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, this.socketOptions);
     else

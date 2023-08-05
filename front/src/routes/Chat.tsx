@@ -7,6 +7,7 @@ import { NewRoomCard } from "./Chat/NewChannel";
 import { SettingCard } from "./Chat/Setting";
 import { NotifCxt } from "../App";
 import { socket } from "../App"
+import "./Chat.css";
 
 export default function Chat() {
     const [selectedChat, setSelectedChat] = useState<chatPreview | undefined>(undefined);

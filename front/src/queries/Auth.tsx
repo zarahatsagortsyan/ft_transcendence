@@ -1,5 +1,6 @@
 import { auth } from './headers'
 import { getUserData } from './User'
+import "./Auth.css";
 
 let myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");

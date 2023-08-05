@@ -1,5 +1,6 @@
 export const auth = () => {
     let token = "Bearer " + localStorage.getItem("userToken");
+    console.log("Token: " + token);
     let myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     return myHeaders;

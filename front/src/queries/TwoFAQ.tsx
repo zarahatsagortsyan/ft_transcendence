@@ -31,15 +31,22 @@ export const twoFAGenerate = () => {
   
   const authRawHeader = () => {
     let token = "bearer " + localStorage.getItem("userToken");
+    console.log("Authentication token: " + token);
     let myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     myHeaders.append("Content-Type", "application/json");
+    console.log("AXPORRRRR PES");
+    console.log(myHeaders.get("Authorization"));
     return myHeaders;
   };
   
   const fetchPost = async (body: any, url: string, userSignIn: any) => {
-    let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/2fa/" + url;
-  
+    // let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/2fa/" + url;
+    console.log("Post request for 2FA\n");
+    let fetchUrl = 'http://localhost:3001' + "/auth/2fa/" + url;
+    console.log("FetchURL: " + fetchUrl);
+    console.log("Bodyyyyy: " + body);
+
     try {
       const response = await fetch(fetchUrl, {
         method: "POST",
@@ -48,6 +55,8 @@ export const twoFAGenerate = () => {
         redirect: "follow",
       });
       const result_1 = await response.json();
+      console.log("Response:", response);
+      // console.log("Before post error on: " + response);
       if (!response.ok) {
         console.log("POST error on ", url);
         return null;
