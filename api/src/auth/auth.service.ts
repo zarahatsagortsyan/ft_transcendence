@@ -35,10 +35,12 @@ export class AuthService {
 		if (user) 
             this.appGateway.onlineFromService(user.id);
         
+        // console.log("Signin42 user: ",user);
         return user ?? this.createUser(dto);
     }
 
     async createUser(dto: AuthUserDto) : Promise<User> {
+
         const user = await this.userService.createUserPromise(dto);
 
         ////should be added
@@ -53,6 +55,7 @@ export class AuthService {
 
     async signin42_token(@Res() res : Response, user_name: string, id: number) : Promise<Response> {
         const tokens = await this.signin_jwt(user_name, id);
+        console.log("signin42_token ", tokens.refresh_token );
 
 		await this.updateRefreshToken(id, tokens.refresh_token);
 		// await this.updateRefreshToken(user_name, tokens.refresh_token);
@@ -61,10 +64,10 @@ export class AuthService {
         url.port = process.env.FRONT_PORT;
 		url.pathname = '/auth';
 		url.searchParams.append('access_token', tokens['access_token']);
-
+        console.log("URL href: " + url.href);
         res.status(302).redirect(url.href);
         console.log("Auth-i verjjjjjjjjjjjjjjjjjj\n");
-        console.log(res);
+        // console.log(res);
 		return res;
     }
 
@@ -89,8 +92,11 @@ export class AuthService {
 
     async updateRefreshToken(id: number, rtoken: string) //maybe Promise<void>
     {
-        const hash = await argon.hash(rtoken);
-        this.userService.updateRefreshTokenById(id, hash);
+        // const hash = await argon.hash(rtoken);
+        // this.userService.updateRefreshTokenById(id, hash);
+
+        this.userService.updateRefreshTokenById(id, rtoken);
+
     }
 
     // async updateRefreshToken(user_name: string, rtoken: string) //maybe Promise<void>
@@ -149,6 +155,8 @@ export class AuthService {
 				id: userId,
 			},
 		});
+
+        console.log("refresh_token user: ", user );
 		// Check if user exists and is logged in
 		if (!user || !user.refresh_token)
 			// throw 403 error
@@ -160,6 +168,7 @@ export class AuthService {
 			// throw 403 error
 			throw new ForbiddenException('Invalid Credentials');
 		// Generate new tokens
+        console.log("refreshing token: " + user.user_name + ":" + user.id);
         const tokens = await this.signin_jwt(user.user_name, user.id);
 		// Update Refresh Token - if user is logged in and valid
 		await this.updateRefreshToken(user.id, tokens.refresh_token);

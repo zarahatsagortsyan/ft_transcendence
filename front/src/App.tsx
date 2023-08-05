@@ -31,8 +31,9 @@ const socketOptions = {
   },
 };
 
-export const socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, socketOptions);
-// export const socket = io("ws://localhost:3001", socketOptions);
+// export const socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, socketOptions);
+console.log("------------------------socketoptions-----------------------", socketOptions);
+export const socket = io("http://localhost:3001/", socketOptions);
 
 
 export default function App() {
@@ -80,6 +81,9 @@ export default function App() {
       }
       setUsersStatus(userstatusTab);
     });
+    return () => {
+      socket.off('update-status');
+    };
   }, [usersStatus]);
   
   

@@ -48,7 +48,7 @@ export const getUserBlocked = () => {
     localStorage.setItem("userGamesWon", result.gamesWon);
     localStorage.setItem("userGamesLost", result.gamesLost);
     localStorage.setItem("userGamesPlayed", result.gamesPlayed);
-    localStorage.setItem("userAuth", result.twoFA);
+    localStorage.setItem("userAuth", result.two_factor_auth);
 
   };
   

@@ -39,13 +39,14 @@ export class AuthController {
 	async callback(@Req() req: any, @Res() res: Response) {
 		console.log("Hellooooooo!!!!!!");
 		// console.log(req);
-
+		console.log("AuthUserDto:::: ", req.user);
 		const user = await this.authService.signin42(req.user as AuthUserDto);
-		console.log('oooooooo:', req.user); 
+		// console.log('oooooooo:', req.user); 
 		const { user_name, id, two_factor_auth } = user;
 		
 		console.log('callback method from auth controller' + user_name + '  ' + id);
 		// console.log(this.authService.signin42_token(res, user_name, id));
+		console.log(user_name, "------------", id);
 		return two_factor_auth ? this.twofaService.signin_2fa(res, user_name) :
 			this.authService.signin42_token(res, user_name, id);
 		// return this.authService.signin42_token(res, user_name, id);
@@ -82,6 +83,7 @@ export class AuthController {
 		@GetCurrentUserId() userId: number,
 		@GetCurrentUser('refreshToken') refreshToken: string,
 	) {
+		console.log("refresh/ . :  ", userId);
 		return this.authService.refresh_token(userId, refreshToken);
 	}
 	// @Public()

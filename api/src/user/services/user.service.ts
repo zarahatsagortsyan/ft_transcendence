@@ -122,7 +122,7 @@ export class UserService {
             },
         });
 
-        console.log(user.gameHistory);
+        // console.log(user.gameHistory);
         const gameHistoryInt: number[] = user.gameHistory;
         console.log(gameHistoryInt);
         if (gameHistoryInt.length === 0) return [];
@@ -193,7 +193,7 @@ export class UserService {
     // }
 
     async getUser(id: number) {
-        console.log(id);
+        // console.log(id);
         if (id === undefined) {
             throw new BadRequestException('Undefined user ID');
         }

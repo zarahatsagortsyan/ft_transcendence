@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res, Get } from '@nestjs/common';
 import { TwoFaDto } from '../dto/auth.dto';
 import { TwoFaService } from './2fa.service';
 import { Response } from 'express';
@@ -47,11 +47,14 @@ export class TwoFAController {
 
 	@Public()
 	@ApiResponse({ status: 401, description: 'Invalid 2FA code' })
-	@Post('/authenticate')
+	@Get('/authenticate')
 	async authenticate(@Body() dto: TwoFaDto) {
+		console.log("HELLO FROM AUTHENTICATE");
+		
 		// LOG
 		console.log(dto.twoFasecret);
-		console.log('auth 2fa', dto);
+		console.log('--------------auth 2fa-------------', dto);
+
 		return this.twoFAservice.authenticate(dto);
 	}
 

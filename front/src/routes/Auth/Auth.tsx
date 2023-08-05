@@ -34,7 +34,7 @@ export default function Auth() {
   useEffect(() => {
     const access_token = location.search.split("=")[1];
     if (access_token) {
-      console.log(access_token);
+      console.log("------accesstoken----:",access_token);
       localStorage.setItem("userToken", access_token);
       const fetchData = async () => {
         const data = await getUserData();
@@ -56,6 +56,7 @@ export default function Auth() {
   }, [location.search, notif, userSignIn]);
 
   const handle42SignIn = () => {
+    console.log("---------------------handle42SignIn localstorage: ", localStorage);
     window.location.href = hrefURL; // Redirect the user to the 42 OAuth sign-in page
   };
 

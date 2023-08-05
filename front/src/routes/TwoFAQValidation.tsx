@@ -31,16 +31,24 @@ export default function TwoFAValidation() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
+    console.log("INCH VOR BAAAAAAAN" + localStorage.getItem("userName"));
     const userSignIn = () => {
       let username = localStorage.getItem("userName");
+      console.log("AAAAAAA userSignIn username: " + username);
+      
       if (username)
         auth.signin(username, () => {
+          console.log("AAAAAAAAAA HLY TENANQ STEX A MTNUM?");
+          
           navigate("/app/private-profile", { replace: true });
         });
     };
     if (username !== "undefined" && username) {
       const twoFAValid = async (username: string) => {
+        console.log("userSignIn 2FA:", username);
+        console.log("AAAAAAAAAAAAuserSignIn twoFACode:", twoFACode);
         const result = await twoFAAuth(twoFACode, username, userSignIn);
+        console.log("userSignIn: resultt::", result);
         if (!result) {
           notif?.setNotifShow(true);
           notif?.setNotifText("Incorrect code. Please try again.");

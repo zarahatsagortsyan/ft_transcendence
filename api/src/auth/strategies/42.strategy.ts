@@ -24,7 +24,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, "42auth"){
 	}
 
     validate(accessToken: string, refreshToken: string, profile: AuthUserDto) {
-		console.log(profile);
+		// console.log("In 42auth strategy: ");
+		
+		// console.log(profile);
 		return profile;
 	}
 }

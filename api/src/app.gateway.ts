@@ -65,8 +65,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.server.emit('update-status', serializedMap);
             this.clientSocket.set(UserId, client)
 
+            
             // await this.chatGateway.handleJoinSocket(UserId, client);
         }
+        // eslint-disable-next-line unicorn/prefer-optional-catch-binding, unicorn/catch-error-name, unicorn/prevent-abbreviations
         catch (e) {
             return false;
         }

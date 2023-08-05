@@ -26,7 +26,8 @@ export class TwoFaService {
     ) {}
 
     signin_2fa(response: Response, user_name: string){
-        const url = new URL(process.env.SITE_URL);
+		console.log("process.env.SITE_NAME: " + process.env.SITE_NAME);
+        const url = new URL(process.env.SITE_NAME);
 		url.port = process.env.FRONT_PORT;
 		url.pathname = '2FA';
 		url.searchParams.append('user_name', user_name);
@@ -124,22 +125,22 @@ export class TwoFaService {
 	async authenticate(dto: TwoFaDto) {
 		// destructure dto
 		const {user_name, twoFacode, id} = dto;
-
+		console.log("---------async authenticate(dto: TwoFaDto)---",dto)
 		const user = this.userService.getUser(id);
 		if (!user) {
 			throw new UnauthorizedException('Invalid User');
 		}
 		
 		// const {two_factor_secret} = user;
-
 		const twoFasecret = (await this.userService.getUser(id)).two_factor_secret;
-
+		
 		const isValidCode = await this.verify2FAcode(twoFacode, twoFasecret);
 		console.log("ARE YOU?");
 		if (!isValidCode) {
 			throw new UnauthorizedException('Invalid 2FA code');
 		}
 		const tokens = await this.authservice.signin_jwt(user_name, id, true);
+		console.log("authenticate: tokens: ",tokens.refresh_token);
 		await this.authservice.updateRefreshToken(id, tokens.refresh_token);
 		return tokens;
 	}

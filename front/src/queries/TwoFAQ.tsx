@@ -7,13 +7,15 @@ export const twoFAGenerate = () => {
   
   export const twoFAAuth = (
     twoFAcode: string,
-    email: string,
+    user_name: string,
     userSignIn: any
   ) => {
     let raw = JSON.stringify({
-      username: email,
+      username: user_name,
       twoFAcode: twoFAcode,
     });
+    console.log("rawwwwwwww: ",raw);
+    console.log("----twofa userSignin: ",userSignIn);
     return fetchPost(raw, "authenticate", userSignIn);
   };
   
@@ -35,12 +37,12 @@ export const twoFAGenerate = () => {
     let myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     myHeaders.append("Content-Type", "application/json");
-    console.log("AXPORRRRR PES");
-    console.log(myHeaders.get("Authorization"));
+    console.log("ZRT", myHeaders.get("Authorization"));
     return myHeaders;
   };
   
   const fetchPost = async (body: any, url: string, userSignIn: any) => {
+    console.log("-----userSignIn: fetchPost:: -----", userSignIn);
     // let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/2fa/" + url;
     console.log("Post request for 2FA\n");
     let fetchUrl = 'http://localhost:3001' + "/auth/2fa/" + url;
@@ -55,7 +57,7 @@ export const twoFAGenerate = () => {
         redirect: "follow",
       });
       const result_1 = await response.json();
-      console.log("Response:", response);
+      console.log("ES Response:", response.headers.get('Authorization'));
       // console.log("Before post error on: " + response);
       if (!response.ok) {
         console.log("POST error on ", url);
@@ -65,6 +67,8 @@ export const twoFAGenerate = () => {
         storeToken(result_1);
         if (url === "authenticate") {
           if (localStorage.getItem("userToken")) {
+            console.log("UserToken from ");
+            
             await getUserData();
             if (localStorage.getItem("userName")) userSignIn();
             else return null;

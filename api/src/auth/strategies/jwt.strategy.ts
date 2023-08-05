@@ -8,6 +8,9 @@ import { AuthService } from '../auth.service';
 import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Console } from 'console';
+import { equal } from 'assert';
+import { equals } from 'class-validator';
 /**
  * Creating a JWT strategy
  */
@@ -29,17 +32,21 @@ export class jwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 	/**
 	 * Validate function used by Passport Module
 	 */
-	async validate(data: { user_name:string, id:number, is2FA: boolean }) {
-        
-        const user = await this.userRepository.findOne({
+	async validate(data: { sub:number, user_name:string, two_factor_auth: boolean }) {
+		console.log("---------validate id:", data.sub);
+        console.log("is2FA", data.two_factor_auth);
+		const user = await this.userRepository.findOne({
             where: {
-                id: data.id,
+                id: data.sub,
             },
         });
-        if(!user)
+        if(!user){
+			console.log("!user: ", user);
             return;
+		}
 		// if user is logged out return 401
         console.log("---------------jwtStrategy validate------------");
+		console.log(user);
 		if (!user.refresh_token) return;
         console.log("---------------jwtStrategy validate1------------");
 
@@ -50,7 +57,7 @@ export class jwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 		if (!user.two_factor_auth) {
 			return user;
 		}
-		if (data.is2FA) {
+		if (data.two_factor_auth) {
 			return user;
 		}
 	}

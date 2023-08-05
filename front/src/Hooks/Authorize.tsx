@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return fakeAuthProvider.signin(() => {
       setUser(newUser);
       localStorage.setItem("userLogged", "true");
+       console.log("localStorage: ",localStorage);
       callback();
     });
   };

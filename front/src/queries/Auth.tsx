@@ -13,6 +13,8 @@ const fetchPost = async (
 ) => {
   // let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/auth/" + url;
   let fetchUrl = 'http://localhost/3001' + "/auth/" + url;
+
+  console.log("--------------fetch_post--------------: url ", fetchUrl);
   try {
     console.log('Auth.ts fetchUrl: ', fetchUrl);
     const response = await fetch(fetchUrl, {
@@ -22,6 +24,7 @@ const fetchPost = async (
       redirect: "follow",
     });
     const result_1 = await response.json();
+    console.log("fetchposssssst: ", url);
     if (!response.ok) {
       console.log("POST error on ", url);
       return "error: " + url;
@@ -32,6 +35,8 @@ const fetchPost = async (
     } else {
       userInfo.clear();
       storeToken(result_1);
+      console.log("FetchingPost: ",localStorage);
+      console.log("localStorage.getItem()", localStorage.getItem("userToken"));
       if (localStorage.getItem("userToken")) {
         await getUserData();
         if (localStorage.getItem("userName")) userSignIn();
@@ -80,7 +85,7 @@ const fetchPostLogout = async () => {
       headers: auth(),
       redirect: "follow",
     });
-    console.log(response);
+    // console.log(response);
     const result_1 = await response.text();
     if (!response.ok) {
       console.log("POST error on logout");
