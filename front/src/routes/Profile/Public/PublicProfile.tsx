@@ -26,8 +26,9 @@ const userInfoInit: userModel = {
 };
 
 const initializeUser = (result: any, setUserInfo: any) => {
+  console.log("Public Profile: result :",result);
   userInfoInit.id = result.id;
-  userInfoInit.username = result.username;
+  userInfoInit.username = result.user_name;
   userInfoInit.avatar = result.avatar;
   userInfoInit.friends = result.frirends;
   userInfoInit.gamesLost = result.gamesLost;
@@ -69,9 +70,12 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchIsUser = async () => {
       let result;
+      console.log("params.userName: ", params.userName);
       if (!isFetched && params.userName !== undefined) {
         result = await getOtherUser(+params.userName);
+        console.log("fetchISUSer: ", result);
         if (result !== "error") {
+          console.log("asdsdsdsdsdsdsdsdd: ", result);
           initializeUser(result, setUserInfo);
           setIsFetched(true);
         } else setIsUser(false);

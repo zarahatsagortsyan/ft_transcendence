@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { AppGateway } from './app.gateway';
 import { JwtModule } from '@nestjs/jwt';
 import configg from './ormconfig';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import configg from './ormconfig';
     GameModule,
     AuthModule,
     JwtModule.register({ secret: process.env.JWT_SECRET }),
+		UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],  ////added AppGateway

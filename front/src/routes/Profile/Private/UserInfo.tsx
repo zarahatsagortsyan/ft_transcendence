@@ -111,13 +111,13 @@ export const ModifyEntry = (props: any) => {
 };
 
 const SpecificEntry = (props: any) => {
-  if (props.toEdit === "EMAIL")
-    return (
-      <EntryIsEmail
-        setUserInput={props.setUserInput}
-        modifyInput={props.userInput.email}
-      />
-    );
+  // if (props.toEdit === "EMAIL")
+  //   return (
+  //     // <EntryIsEmail
+  //     //   setUserInput={props.setUserInput}
+  //     //   modifyInput={props.userInput.email}
+  //     // />
+  //   );
   if (props.toEdit === "USERNAME")
     return (
       <EntryIsUsername
@@ -147,21 +147,21 @@ const EntryIsUsername = (props: any) => {
   );
 };
 
-const EntryIsEmail = (props: any) => {
-  return (
-    <div>
-      <Form.Group className="mb-3">
-        <Form.Label className="IBM-text" style={{ fontSize: "20px" }}>
-          EMAIL
-        </Form.Label>
-        <Form.Control
-          type="email"
-          placeholder="new email"
-          onChange={props.setUserInput}
-          value={props.modifyInput}
-          name="email"
-        />
-      </Form.Group>
-    </div>
-  );
-};
+// const EntryIsEmail = (props: any) => {
+//   return (
+//     <div>
+//       <Form.Group className="mb-3">
+//         <Form.Label className="IBM-text" style={{ fontSize: "20px" }}>
+//           EMAIL
+//         </Form.Label>
+//         <Form.Control
+//           type="email"
+//           placeholder="new email"
+//           onChange={props.setUserInput}
+//           value={props.modifyInput}
+//           name="email"
+//         />
+//       </Form.Group>
+//     </div>
+//   );
+// };

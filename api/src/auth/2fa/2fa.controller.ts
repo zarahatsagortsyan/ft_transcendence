@@ -28,18 +28,18 @@ export class TwoFAController {
 		@Body() { twoFAcode }: any,
 		@GetCurrentUser() user: TwoFaDto,
 	) {
-		console.log("BAREV DZEEEEEZ");
-		console.log("TwoFaSecret: " + user.twoFasecret);
-		console.log("USer: " + user.id);
+		// console.log("BAREV DZEEEEEZ");
+		// console.log("TwoFaSecret: " + user.twoFasecret);
+		// console.log("USer: " + user.id);
 		const tokens = await this.twoFAservice.turn_on(twoFAcode, user);
-		console.log("Barev Dzezic heto");
+		// console.log("Barev Dzezic heto");
 		return tokens;
 	}
 
 	@Post('/turn-off')
 	@HttpCode(200)
 	async turn_off(@GetCurrentUser() user: TwoFaDto) {
-		console.log("HEREEEE");
+		// console.log("HEREEEE");
 		
 		const tokens = await this.twoFAservice.turn_off(user);
 		return tokens;
@@ -49,11 +49,11 @@ export class TwoFAController {
 	@ApiResponse({ status: 401, description: 'Invalid 2FA code' })
 	@Get('/authenticate')
 	async authenticate(@Body() dto: TwoFaDto) {
-		console.log("HELLO FROM AUTHENTICATE");
+		// console.log("HELLO FROM AUTHENTICATE");
 		
 		// LOG
-		console.log(dto.twoFasecret);
-		console.log('--------------auth 2fa-------------', dto);
+		// console.log(dto.twoFasecret);
+		// console.log('--------------auth 2fa-------------', dto);
 
 		return this.twoFAservice.authenticate(dto);
 	}

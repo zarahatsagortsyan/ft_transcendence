@@ -37,24 +37,24 @@ export class ChatService {
 		const users = await this.userRepository.find();
 		let count = 0;
 		for (const [index, user] of users.entries()) {
-			console.log('   user %d: %s', index, user.user_name);
+			// console.log('   user %d: %s', index, user.user_name);
 			count = index + 1;
 		}
-		console.log('total %d users', count);
+		// console.log('total %d users', count);
 		return;
 	}
 
 	async listAllChannels() {
 		// const channels = await this.prisma.channel.findMany();
 		const chats = await this.chatRepository.find();
-		console.log(chats);
+		// console.log(chats);
 
 		let count = 0;
 		for (const [index, channel] of chats.entries()) {
-			console.log('   channel %d: %s', index, channel.name);
+			// console.log('   channel %d: %s', index, channel.name);
 			count = index + 1;
 		}
-		console.log('total %d chats', count);
+		// console.log('total %d chats', count);
 		return;
 	}
 

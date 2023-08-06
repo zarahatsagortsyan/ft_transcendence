@@ -28,10 +28,10 @@ export class AuthService {
         //         id: user_id,
         //     },
         // });
-        console.log("Axpor pesic araj!");
+        // console.log("Axpor pesic araj!");
         
         const user = await this.userService.getUserByUsernameNull(user_name);
-        console.log("Axpor pes!");
+        // console.log("Axpor pes!");
 		if (user) 
             this.appGateway.onlineFromService(user.id);
         
@@ -47,7 +47,7 @@ export class AuthService {
         // if (user) {
 		// 	await this.uploadService.download_avatar(user.id, avatar);
 		// }
-        console.log("Create areci axper");
+        // console.log("Create areci axper");
 		this.appGateway.onlineFromService(user.id);
 
         return user;
@@ -55,7 +55,7 @@ export class AuthService {
 
     async signin42_token(@Res() res : Response, user_name: string, id: number) : Promise<Response> {
         const tokens = await this.signin_jwt(user_name, id);
-        console.log("signin42_token ", tokens.refresh_token );
+        // console.log("signin42_token ", tokens.refresh_token );
 
 		await this.updateRefreshToken(id, tokens.refresh_token);
 		// await this.updateRefreshToken(user_name, tokens.refresh_token);
@@ -64,9 +64,9 @@ export class AuthService {
         url.port = process.env.FRONT_PORT;
 		url.pathname = '/auth';
 		url.searchParams.append('access_token', tokens['access_token']);
-        console.log("URL href: " + url.href);
+        // console.log("URL href: " + url.href);
         res.status(302).redirect(url.href);
-        console.log("Auth-i verjjjjjjjjjjjjjjjjjj\n");
+        // console.log("Auth-i verjjjjjjjjjjjjjjjjjj\n");
         // console.log(res);
 		return res;
     }
@@ -125,7 +125,7 @@ export class AuthService {
 	// 	this.appGateway.offlineFromService((await this.userService.getUserByUsername(user_name)).id);
 	// }
 	async signout(userId: number): Promise<void> {
-       console.log("signout(userId: number): Promise<void>") 
+    //    console.log("signout(userId: number): Promise<void>") 
        this.userService.updateRefreshTokenById(userId, '') //had to be null?
     //    try{
     //         await this.userRepository
@@ -156,7 +156,7 @@ export class AuthService {
 			},
 		});
 
-        console.log("refresh_token user: ", user );
+        // console.log("refresh_token user: ", user );
 		// Check if user exists and is logged in
 		if (!user || !user.refresh_token)
 			// throw 403 error
@@ -168,7 +168,7 @@ export class AuthService {
 			// throw 403 error
 			throw new ForbiddenException('Invalid Credentials');
 		// Generate new tokens
-        console.log("refreshing token: " + user.user_name + ":" + user.id);
+        // console.log("refreshing token: " + user.user_name + ":" + user.id);
         const tokens = await this.signin_jwt(user.user_name, user.id);
 		// Update Refresh Token - if user is logged in and valid
 		await this.updateRefreshToken(user.id, tokens.refresh_token);

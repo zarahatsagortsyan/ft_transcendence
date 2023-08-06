@@ -8,6 +8,7 @@ import { ModifyEntry } from "./UserInfo";
 import { TwoFA } from "./TwoFAQ";
 import { UsersRelations } from "./Relations/UsersRelations";
 import { COnUserSimple } from "../../../User/SimpleUser";
+import IconPen from "../../../ressources/icons/Icon_Pen.svg";
 import "../Profiles.css";
 export default function UserPrivateProfile() {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export default function UserPrivateProfile() {
               <input
                 type="image"
                 alt="avatar of user"
-                // src={IconPen}
+                src={IconPen}
                 className="edit-round-icon float-end"
                 onClick={() => setModalShow(true)}
               />
@@ -144,7 +145,7 @@ export default function UserPrivateProfile() {
                     </Col>
                   </Row>
                 </div>
-                <div>
+                {/* <div>
                   <Row className="wrapper p-3">
                     <Col className="text-wrapper">
                       <div className="IBM-text" style={{ fontSize: "20px" }}>
@@ -168,7 +169,7 @@ export default function UserPrivateProfile() {
                       </button>
                     </Col>
                   </Row>
-                </div>
+                </div> */}
                 <TwoFA
                   auth={authStatus}
                   onClick={() => setModalShowAuth(true)}
