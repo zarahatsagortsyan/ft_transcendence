@@ -4,14 +4,14 @@ export const updateAvatarQuery = (file: any) => {
     var formdata = new FormData();
     formdata.append("avatar", file.files[0], "avatar.jpeg");
   
-    return fetchPost(formdata, "update_avatar", auth, file);
+    return fetchPost(formdata, "updateAvatar", auth, file);
   };
   
   export const updateUsernameQuery = (username: string) => {
     var raw = JSON.stringify({
       username: username,
     });
-    return fetchPost(raw, "update_username", authContent, username);
+    return fetchPost(raw, "updateUsername", authContent, username);
   };
   
   export const updateEmailQuery = (email: string) => {
@@ -29,7 +29,7 @@ export const updateAvatarQuery = (file: any) => {
   ) => {
     // let fetchUrl = process.env.REACT_APP_BACKEND_URL + "/users/" + url;
     let fetchUrl = 'http://localhost:3001' + "/users/" + url;
-
+console.log("update_userName: ", fetchUrl);
     try {
       const response = await fetch(fetchUrl, {
         method: "POST",

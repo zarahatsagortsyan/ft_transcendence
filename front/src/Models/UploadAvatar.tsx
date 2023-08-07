@@ -13,6 +13,7 @@ export function MUploadAvatar(props: any) {
 
   const handleSubmit = (event: any) => {
     if (newAvatar) {
+      console.log("avatar handle sublit: ", newAvatar);
       const uploadAvatar = async () => {
         const result_1 = await uploadAvatarQuery(newAvatar);
         if (result_1 !== "error") {

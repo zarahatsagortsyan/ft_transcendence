@@ -124,7 +124,7 @@ export class UserService {
 
         // console.log(user.gameHistory);
         const gameHistoryInt: number[] = user.gameHistory;
-        console.log(gameHistoryInt);
+        // console.log(gameHistoryInt);
         if (gameHistoryInt.length === 0) return [];
 
         const gameHistory: Game[] = [];

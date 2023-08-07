@@ -8,6 +8,7 @@ import { User } from '../models/user.entity';
 import { IFriendship } from '../models/friendship.interface';
 import { GetCurrentUserId } from 'src/decorator/get-current-user-decorator-id';
 import { isNumber, isNumberString } from 'class-validator';
+import { UpdateUsernameDto } from '../models/update.dto';
 
 @Controller('users')
 
@@ -24,13 +25,13 @@ export class UserController {
 		return userDto;
 	}
     
-    @Get('getUser')
-    getUser(@Query('otherId') otherId: number | string) {
+    @Post('getUser')
+    getUser(@Body('otherId') otherId: number | string) {
 		this.logger.log('getUser by ID ' + otherId);
 		try {
             console.log("0");
-
-			if (isNumberString(otherId)) {
+			console.log("getUser otherId: ", otherId);
+			if (isNumber(otherId)) {
                 console.log("1");
 				const userDto = this.userService.getUser(Number(otherId));
 				return userDto;
@@ -55,8 +56,8 @@ export class UserController {
 		return this.userService.getLeaderboard();
 	}
 
-    @Get('getGameHistory')
-	getGameHistory(@Query('otherId') otherId: number) {
+    @Post('getGameHistory')
+	getGameHistory(@Body('otherId') otherId: number) {
 		this.logger.log('getGameHistory otherID: ' + otherId);
 		return this.userService.getGameHistory(otherId);
 	}
@@ -107,15 +108,15 @@ export class UserController {
 
 	@Post('/updateUsername')
 	async updateUsername(
-
+		@Body() newUsername: UpdateUsernameDto,
 		@GetCurrentUserId() id: number,
-        @Query('newUsername') newUsername: string
 	) {
+		console.log("newusername: ", newUsername);
 		this.logger.log(
 			'updateUsername ID ' + id + ' -> username: ' + newUsername,
 		);
 		try {
-			const result = await this.userService.updateUsername(id, newUsername);
+			const result = await this.userService.updateUsername(id, newUsername.username);
 			return result;
 		} catch {
 			throw new ForbiddenException('Username already exists');
