@@ -35,7 +35,6 @@ export class TwoFaService {
     }
 
     async turn_on(twoFacode: any, user: TwoFaDto) {
-		// destructure data
 		const {user_name, id } = user;
 		// Check is 2FA code is valid
 		console.log("Before verifying2FACode");
@@ -53,13 +52,6 @@ export class TwoFaService {
 		console.log("Before updating twoFA");
 
 		this.userService.updatetwoFa(id, true);
-        // await this.userRepository.update(user_name, {two_factor_auth: true} );
-
-		// Enable 2FA for user (add method to user module ?)
-		// await this.prisma.user.update({
-		// 	where: { email: email },
-		// 	data: { twoFA: true },
-		// });
 		console.log("Signing jwt");
 		const tokens = await this.authservice.signin_jwt(user_name, id, true);
 		return tokens;

@@ -24,8 +24,8 @@ export class ChannelDto {
 	@IsString()
 	password: string;
 
-	@IsEmail()
-	email: string;
+	@IsString()
+	user_name: string;
 
 	@IsArray()
 	@IsOptional()

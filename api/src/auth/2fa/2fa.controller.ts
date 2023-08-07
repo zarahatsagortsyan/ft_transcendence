@@ -47,7 +47,7 @@ export class TwoFAController {
 
 	@Public()
 	@ApiResponse({ status: 401, description: 'Invalid 2FA code' })
-	@Get('/authenticate')
+	@Post('/authenticate')
 	async authenticate(@Body() dto: TwoFaDto) {
 		console.log("HELLO FROM AUTHENTICATE");
 		

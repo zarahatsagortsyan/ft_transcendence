@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Chat, ChatMode } from '../models/chat.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,12 +8,12 @@ import { IMessage } from '../interfaces/message.interface';
 import { Message } from '../models/message.entity';
 import { User } from 'src/user/models/user.entity';
 import { equal } from 'assert';
-import { WsException } from '@nestjs/websockets';
+import { WsException, } from '@nestjs/websockets';
 import { UserService } from 'src/user/services/user.service';
 import { getRepository } from "typeorm";
-import { chatPreview } from '../models/chat.type';
+import { chatPreview, updateChannel } from '../models/chat.type';
 import { Equal, FindManyOptions } from 'typeorm';
-import { DMDto } from '../models/chat.dto';
+import { ChannelDto, DMDto } from '../models/chat.dto';
 
 
 @Injectable()
@@ -102,34 +102,34 @@ export class ChatService {
 	//TQAC KPCRAC need to tested
 	async getChannelsUserIn(id: number) {
 		try {
-		//   const userRepository = getRepository(User);
-		  const user = await this.userRepository.findOne({where: { id: id },});
-		  if (!user) {
-			return [];
-		  }
-	  
-		  const channels = await this.chatRepository
-			.createQueryBuilder('chat')
-			.leftJoin('chat.owner', 'owner', 'owner.dm = true')
-			.leftJoin('chat.admins', 'admin')
-			.leftJoin('chat.members', 'member')
-			.leftJoin('chat.inviteds', 'invited')
-			.where('owner.id = :userId', { userId: user.id })
-			.orWhere('admin.id = :userId', { userId: user.id })
-			.orWhere('member.id = :userId', { userId: user.id })
-			.orWhere('invited.id = :userId', { userId: user.id })
-			.getMany();
-	  
-		  // Organize the channels if needed
-		  const organizedChannels = this.organizeChannelToJoin(channels);
-		  return organizedChannels;
-		} catch (error) {
-		  console.log('get__channels error:', error);
-		  throw error; // Rethrow the error to handle it at the caller's level
-		}
-	  }
+			//   const userRepository = getRepository(User);
+			const user = await this.userRepository.findOne({ where: { id: id }, });
+			if (!user) {
+				return [];
+			}
 
-	  organizeChannelToJoin(source: any) {
+			const channels = await this.chatRepository
+				.createQueryBuilder('chat')
+				.leftJoin('chat.owner', 'owner', 'owner.dm = true')
+				.leftJoin('chat.admins', 'admin')
+				.leftJoin('chat.members', 'member')
+				.leftJoin('chat.inviteds', 'invited')
+				.where('owner.id = :userId', { userId: user.id })
+				.orWhere('admin.id = :userId', { userId: user.id })
+				.orWhere('member.id = :userId', { userId: user.id })
+				.orWhere('invited.id = :userId', { userId: user.id })
+				.getMany();
+
+			// Organize the channels if needed
+			const organizedChannels = this.organizeChannelToJoin(channels);
+			return organizedChannels;
+		} catch (error) {
+			console.log('get__channels error:', error);
+			throw error; // Rethrow the error to handle it at the caller's level
+		}
+	}
+
+	organizeChannelToJoin(source: any) {
 		const channels = [];
 		if (source) {
 			if (source.owner)
@@ -162,13 +162,13 @@ export class ChatService {
 			const id = await this.getIdByUsername(info.user_name);
 			ids.push(id, info.targetId);
 			const dmT = {
-					dm: true,
-					private: true,
-					owners: {
-						connect: ids.map((id) => ({ id: id })),
-					},
+				dm: true,
+				private: true,
+				owners: {
+					connect: ids.map((id) => ({ id: id })),
+				},
 			};
-			return  (await this.chatRepository.save(dmT)).id;
+			return (await this.chatRepository.save(dmT)).id;
 		} catch (error) {
 			console.log('new__DM error:', error);
 			throw new WsException(error);
@@ -280,17 +280,17 @@ export class ChatService {
 
 	// async  getChatListByUserName(user_name: string) {
 	// 	try {
-	  
+
 	// 	  // Find the user by email
 	// 	  const user = await this.userRepository.findOne({
 	// 		where: { user_name },
 	// 		select: ['id'],
 	// 	  });
-	  
+
 	// 	  if (!user) {
 	// 		throw new Error('User not found');
 	// 	  }
-	  
+
 	// 	  // Get the chat list with JOINs using the query builder
 	// 	  const channels = await this.chatRepository
 	// 		.createQueryBuilder('chat')
@@ -302,7 +302,7 @@ export class ChatService {
 	// 		.orderBy('messages.createdAt', 'DESC')
 	// 		.take()
 	// 		.getMany();
-	  
+
 	// 	  // Process and organize the fetched channels if needed
 	// 	  const organizedChannels = organize__chatList__ByEmail(channels);
 	// 	  return channels;
@@ -311,4 +311,240 @@ export class ChatService {
 	// 	  throw error; // Rethrow the error to handle it at the caller's level
 	// 	}
 	//   }
+
+	/////-----------ahavor borshac idk it's working or not
+	async getChatByChannelId(channelId: number): Promise<Chat | null> {
+
+		try {
+			const source = await this.chatRepository.findOne({
+				where: { id: channelId },
+				select: {
+					id: true,
+					dm: true,
+					name: true,
+					isPassword: true,
+					// picture: true,
+					// updatedAt: true,
+					owner: {
+						//   select: {
+						id: true,
+						user_name: true,
+						// username: true,
+						//   },
+					},
+					// messages: {
+					//   order: {
+					// 	created_at: 'ASC',
+					//   },
+					//   take: 1,
+					// },
+				},
+				relations: ['messages'], // Eager load the messages
+			});
+			if (source) {
+				source.messages = source.messages.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()).slice(0, 1);
+			}
+			return source || null;
+		} catch (error) {
+			console.log('getChatByChannelId error:', error);
+			throw new WsException(error);
+		}
+	}
+
+	async newDM(info: DMDto) {
+		try {
+			// const ids: number[] = [];
+			// const id = await this.getIdByUsername(info.user_name);
+			const user = await this.userService.getUserByUsername(info.user_name);
+			// ids.push(id, info.targetId);
+			if (!user) {
+				// Handle the case when the user with the specified email is not found
+				throw new Error('User not found');
+			}
+			const dm = this.chatRepository.create({
+				dm: true,
+				private: true,
+				owner: user,
+			});
+			const create_dm = await this.chatRepository.save(dm)
+			return create_dm.id;
+		} catch (error) {
+			console.log('newDM error:', error);
+			throw new WsException(error);
+		}
+	}
+
+	async newChannel(info: ChannelDto) {
+		try {
+			const password = info.password;
+			const owner = await this.userService.getUserByUsername(info.user_name);
+
+			if (!owner) {
+				// Handle the case when the owner with the specified ID is not found
+				throw new Error('Owner not found');
+			}
+			const members = await this.userRepository.findByIds(info.members.map((member) => member.id));
+			const channel = this.chatRepository.create({
+				name: info.name,
+				private: info.private,
+				isPassword: info.isPassword,
+				password: info.password,
+				owner: owner, // Assign the user as the owner
+				admins: [owner], // Add the user as an admin
+				members: members, // Connect the members to the channel
+			});
+			// const channel = await this.prisma.channel.create({
+			// 	data: {
+			// 		name: info.name,
+			// 		private: info.private,
+			// 		isPassword: info.isPassword,
+			// 		password: password,
+			// 		owners: {
+			// 			connect: {
+			// 				email: info.email,
+			// 			},
+			// 		},
+			// 		admins: {
+			// 			connect: {
+			// 				email: info.email,
+			// 			},
+			// 		},
+			// 		members: {
+			// 			connect: info.members.map((id) => ({ id: id.id })),
+			// 		},
+			// 	},
+			// });
+			const createdChannel = await this.chatRepository.save(channel);
+			return createdChannel.id;
+		} catch (error) {
+			console.log('newChannel error:', error);
+			throw new WsException(error);
+		}
+	}
+
+	////---definitely not working 
+	async joinChannel(data: updateChannel): Promise<number> {
+		try {
+			const database = await this.chatRepository.findOne({
+				where: {
+					id: data.channelId,
+				},
+				select: {
+					password: true,
+				},
+			});
+
+			const pwMatches = database?.password === data.password;
+
+			if (pwMatches) {
+				const user = await this.userRepository.findOne({
+					where: {
+						user_name: data.user_name,
+					},
+				});
+
+				if (!user) {
+					// Handle the case when the user with the specified user_name is not found
+					throw new Error('User not found');
+				}
+				await this.chatRepository.update(
+					{ id: data.channelId },
+					{
+						members: [user], // Connect the user to the channel as a member
+						inviteds: [user], // Disconnect the user from inviteds (if applicable)
+					}
+				);
+				const updatedChannel = await this.chatRepository.findOneById(data.channelId);
+
+				return updatedChannel.id;
+			}
+		} catch (error) {
+			console.log('joinChannel error:', error);
+			throw new Error(error.message);
+		}
+	}
+
+	/*
+
+	async leave__channel(data: updateChannel) {
+		try {
+			let targetId: number | Promise<number> = 0;
+			targetId =
+				data.targetId == -1
+					? await this.get__id__ByEmail(data.email)
+					: data.targetId;
+			await this.prisma.channel.update({
+				where: {
+					id: data.channelId,
+				},
+				data: {
+					owners: {
+						disconnect: {
+							id: targetId,
+						},
+					},
+					admins: {
+						disconnect: {
+							id: targetId,
+						},
+					},
+					members: {
+						disconnect: {
+							id: targetId,
+						},
+					},
+					inviteds: {
+						disconnect: {
+							id: targetId,
+						},
+					},
+				},
+			});
+			const channel = await this.get__chat__ByChannelId(data.channelId);
+			if (channel.owners.length === 0) {
+				await this.prisma.msg.deleteMany({
+					where: {
+						cid: data.channelId,
+					},
+				});
+				await this.prisma.user.update({
+					where: {
+						email: data.email,
+					},
+					data: {
+						owner: {
+							disconnect: {
+								id: data.channelId,
+							},
+						},
+						admin: {
+							disconnect: {
+								id: data.channelId,
+							},
+						},
+						member: {
+							disconnect: {
+								id: data.channelId,
+							},
+						},
+						invited: {
+							disconnect: {
+								id: data.channelId,
+							},
+						},
+					},
+				});
+				const deleted = await this.prisma.channel.delete({
+					where: {
+						id: data.channelId,
+					},
+				});
+				return deleted;
+			}
+		} catch (error) {
+			console.log('delete__channel error:', error);
+			throw new WsException(error.message);
+		}
+	}
+	*/	
 }

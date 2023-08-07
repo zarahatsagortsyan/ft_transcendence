@@ -25,7 +25,7 @@ export type oneMsg = {
 	msgId: number;
 	id: number;
 	channelId: number;
-	email: string;
+	user_name: string;
 	username: string;
 	msg: string;
 	createAt: string;
@@ -37,7 +37,7 @@ export type oneUser = {
 	online: boolean;
 	username: string;
 	id: number;
-	email: string;
+	user_name: string;
 	isOwner: boolean;
 	isAdmin: boolean;
 	isInvited: boolean;
@@ -46,7 +46,7 @@ export type oneUser = {
 };
 
 export type updateUser = {
-	selfEmail: string | null;
+	user_name: string | null;
 	otherId: number;
 };
 
@@ -58,7 +58,7 @@ export type Tag = {
 export type updateChannel = {
 	channelId: number;
 	dm: boolean;
-	email: string | null;
+	user_name: string | null;
 	password: string;
 	targetId: number;
 	private: boolean;
@@ -68,7 +68,7 @@ export type updateChannel = {
 
 export type mute = {
 	duration: number;
-	email: string;
+	user_name: string;
 	channelId: number;
 };
 

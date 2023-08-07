@@ -7,173 +7,187 @@ import { socket as chatSocket } from '../App';
 import { Navigate } from 'react-router-dom';
 import { NotifCxt } from '../App';
 import "./Game.css";
-class Settings extends React.Component <SettingsProps, SettingsState> {
-  
-  constructor(props: SettingsProps){
+class Settings extends React.Component<SettingsProps, SettingsState> {
+
+  constructor(props: SettingsProps) {
     super(props);
-    this.state = {message: this.props.message};
+    this.state = { message: this.props.message };
+    console.log("this.state from Game.tsx constructor" + this.state);
+
   }
 
-  static getDerivedStateFromProps(props: SettingsProps, state: SettingsState){
-    return {message: props.message};
+  static getDerivedStateFromProps(props: SettingsProps, state: SettingsState) {
+    return { message: props.message };
   }
-
-    render() {
-      return (
-        <FocusTrap>
-      <aside
-        role="dialog"
-        tabIndex={-1}
-        aria-modal="true"
-        className="modal-settings"
-        onKeyDown={(event) => {this.props.onKeyDown(event)}}
-      >
-        <div className="modal-text">
-          Press key for moving {this.state.message}
-        </div>
-        <button onClick={() => {this.props.onClickClose()}} className="closeButton">X</button>
-      </aside>
-    </FocusTrap>
-      );
-
-    }
-  }
-
-
-class StartButton extends React.Component< Button, ButtonState > {
-
-    constructor(props: Button){
-      super(props);
-      this.state = {showButton: true,
-                    buttonText: "Start",
-      };
-    }
   
-    static getDerivedStateFromProps(props: Button, state: ButtonState){
-      return {
-        showButton: props.showButton,
-        buttonText: props.buttonText
-      };
-    }
-  
-    render() {
-         const btt = this.state.showButton ? 'unset': 'none';
-      return (
-            <button onClick={this.props.clickHandler} style={{display: `${btt}`,}} className="Start_button">{this.state.buttonText}</button>
-        )
-    }
-    } 
+  render() {
+    return (
+      <FocusTrap>
+        <aside
+          role="dialog"
+          tabIndex={-1}
+          aria-modal="true"
+          className="modal-settings"
+          onKeyDown={(event) => { this.props.onKeyDown(event) }}
+        >
+          <div className="modal-text">
+            Press key for moving {this.state.message}
+          </div>
+          <button onClick={() => { this.props.onClickClose() }} className="closeButton">X</button>
+        </aside>
+      </FocusTrap>
+    );
+
+  }
+}
 
 
-class Ball extends React.Component< Coordinates, {} >
+class StartButton extends React.Component<Button, ButtonState> {
+
+  constructor(props: Button) {
+    super(props);
+    this.state = {
+      showButton: true,
+      buttonText: "Start",
+    };
+  }
+
+  static getDerivedStateFromProps(props: Button, state: ButtonState) {
+    return {
+      showButton: props.showButton,
+      buttonText: props.buttonText
+      
+    };
+  }
+
+  render() {
+    const btt = this.state.showButton ? 'unset' : 'none';
+    return (
+      <button onClick={this.props.clickHandler} style={{ display: `${btt}`, }} className="Start_button">{this.state.buttonText}</button>
+    )
+  }
+}
+
+
+class Ball extends React.Component<Coordinates, {}>
 {
   render() {
-    const show = this.props.showBall ? 'unset': 'none';
-    if(window.innerHeight <= window.innerWidth){
+    const show = this.props.showBall ? 'unset' : 'none';
+    if (window.innerHeight <= window.innerWidth) {
       return (
-         <div
-            style={{
-               top: `calc(${this.props.y}% - 1vh)`,
-               left: `calc(${this.props.x}% - 1vh)`,
-               display: `${show}`
+        <div
+          style={{
+            top: `calc(${this.props.y}% - 1vh)`,
+            left: `calc(${this.props.x}% - 1vh)`,
+            display: `${show}`
 
-            }}
-            className={ 'Ball' }
-         />
+          }}
+          className={'Ball'}
+        />
       );
     }
-    if(window.innerHeight > window.innerWidth){
+    if (window.innerHeight > window.innerWidth) {
       return (
-         <div
-            style={{
-               top: `calc(${this.props.y}% - 1/45*90vw/177*100)`,
-               left: `calc(${this.props.x}% - 1/45*90vw/177*100)`,
-               display: `${show}`
+        <div
+          style={{
+            top: `calc(${this.props.y}% - 1/45*90vw/177*100)`,
+            left: `calc(${this.props.x}% - 1/45*90vw/177*100)`,
+            display: `${show}`
 
-            }}
-            className={ 'Ball' }
-         />
+          }}
+          className={'Ball'}
+        />
       );
     }
   }
 }
 
-class Message extends React.Component< Msg, MsgState > {
+class Message extends React.Component<Msg, MsgState> {
 
-    constructor(props: Msg){
-        super(props);
-        this.state = {showMsg: false,
-                      type: 0,};
-        }
-      
-        static getDerivedStateFromProps(props: Msg, state: MsgState){
-          return {
-            showMsg: props.showMsg,
-            type: props.type
-          };
-        }
-      
-
-        render() {
-          const disp = this.state.showMsg ? 'unset': 'none';
-          var message: string;
-          switch(this.state.type) {
-            case 1:
-                message = "Please wait for another player";
-                break;
-            case 2:
-                message = "You win";
-                break;
-            case 3:
-                message = "You lose";
-                break;
-            case 4:
-                message = "Waiting for your opponent to accept the invitation";
-                break;
-            case 5:
-                message = "Please finish your game before starting a new one";
-                break; 
-             default:
-                 message = "error";
-          }
-       return (
-             <div style={{display: `${disp}`,}} className="Message">{message}</div>
-         )
-     }
-     } 
-       
-
-class Paddle extends React.Component< PaddleProps, StatePaddle > {
-    constructor(props: PaddleProps){
-      super(props);
-      this.state = {side: props.side, 
-                    y: props.ystart,
-                    show: props.show,
-                };
+  constructor(props: Msg) {
+    super(props);
+    this.state = {
+      showMsg: false,
+      type: 0,
     };
+  }
 
-    componentWillReceiveProps(props: PaddleProps) {
-    this.setState({y: props.y});
-      }
-      
-    render() {
-        const show = this.props.show ? 'unset': 'none';
-        var side: string;
-        if (this.props.side === 'left')
-            side = "Pad-left";
-        else
-            side = "Pad-right";
-        return (
-            <div
-              style={{
-                display: `${show}`,
-                top: `${this.state.y}%`,
-              }} 
-              className={`${side}`}
-           />
-        );
-       }
+  static getDerivedStateFromProps(props: Msg, state: MsgState) {
+    return {
+      showMsg: props.showMsg,
+      type: props.type
+    };
+  }
+
+
+  render() {
+    const disp = this.state.showMsg ? 'unset' : 'none';
+    var message: string;
+    console.log("OAOAOAOAO from render() TYPE " + this.state.type);
+    console.log("OAOAOAOAO from render() + showMsg " + this.state.showMsg);
+    
+    switch (this.state.type) {
+      case 1:
+        message = "Please wait for another player";
+        break;
+      case 2:
+        message = "You win";
+        break;
+      case 3:
+        message = "You lose";
+        break;
+      case 4:
+        message = "Waiting for your opponent to accept the invitation";
+        break;
+      case 5:
+        message = "Please finish your game before starting a new one";
+        break;
+      default:
+        {
+          // console.log("HERE In Game.tsx render()");
+
+          message = "error";
+        }
     }
+    return (
+      <div style={{ display: `${disp}`, }} className="Message">{message}</div>
+    )
+  }
+}
+
+
+class Paddle extends React.Component<PaddleProps, StatePaddle> {
+  constructor(props: PaddleProps) {
+    super(props);
+    this.state = {
+      side: props.side,
+      y: props.ystart,
+      show: props.show,
+    };
+  };
+
+  componentWillReceiveProps(props: PaddleProps) {
+    this.setState({ y: props.y });
+  }
+
+  render() {
+    const show = this.props.show ? 'unset' : 'none';
+    var side: string;
+    if (this.props.side === 'left')
+      side = "Pad-left";
+    else
+      side = "Pad-right";
+    return (
+      <div
+        style={{
+          display: `${show}`,
+          top: `${this.state.y}%`,
+        }}
+        className={`${side}`}
+      />
+    );
+  }
+}
 
 export default class Game extends React.Component<PropsPong, StatePong> {
   static contextType = NotifCxt
@@ -221,7 +235,7 @@ export default class Game extends React.Component<PropsPong, StatePong> {
     };
     // if (this.props.pvtGame === false) 
     //   this.socket = io("ws://localhost:3001", this.socketOptions);
-    if (this.props.pvtGame === false) 
+    if (this.props.pvtGame === false)
       this.socket = io(`${process.env.REACT_APP_BACKEND_SOCKET}`, this.socketOptions);
     else
       this.socket = chatSocket;
@@ -257,42 +271,41 @@ export default class Game extends React.Component<PropsPong, StatePong> {
     this.socket.on("end_game", (winner: number) =>
       winner === this.state.playerNumber
         ? this.setState({
-            msgType: 2,
-            gameStarted: false,
-            showStartButton: true,
-            buttonState: "New Game",
-            avatarP1URL: "",
-            avatarP2URL: "",
-          })
+          msgType: 2,
+          gameStarted: false,
+          showStartButton: true,
+          buttonState: "New Game",
+          avatarP1URL: "",
+          avatarP2URL: "",
+        })
         : this.setState({
-            msgType: 3,
-            gameStarted: false,
-            showStartButton: true,
-            buttonState: "New Game",
-            avatarP1URL: "",
-            avatarP2URL: "",
-          })
+          msgType: 3,
+          gameStarted: false,
+          showStartButton: true,
+          buttonState: "New Game",
+          avatarP1URL: "",
+          avatarP2URL: "",
+        })
     );
 
     if (this.props.pvtGame && localStorage.getItem("playernb") === "1") {
       let RoomId = Number(localStorage.getItem("roomid")!);
-      this.setState({roomId: RoomId});
-      this.setState({playerNumber: 1, msgType: 4, buttonState: "Cancel"});
+      this.setState({ roomId: RoomId });
+      this.setState({ playerNumber: 1, msgType: 4, buttonState: "Cancel" });
       this.socket.on("rejected", (targetName: string) => {
-        this.setState({roomId: 0, playerNumber: 0, msgType: 0, buttonState: "Start"})
-        this.setState({redirectChat: true})
+        this.setState({ roomId: 0, playerNumber: 0, msgType: 0, buttonState: "Start" })
+        this.setState({ redirectChat: true })
         console.log(targetName + ' rejected')
         this.context?.setNotifText(targetName + ' rejected the game');
         this.context?.setNotifShow(true);
       }
-        
       );
-    } 
+    }
 
     if (this.props.pvtGame && localStorage.getItem("playernb") === "2") {
       let RoomId = Number(localStorage.getItem("roomid")!);
-      this.setState({roomId: RoomId, playerNumber: 2, msgType: 0, gameStarted: true, showStartButton: false});
-    } 
+      this.setState({ roomId: RoomId, playerNumber: 2, msgType: 0, gameStarted: true, showStartButton: false });
+    }
   }
 
 
@@ -317,14 +330,13 @@ export default class Game extends React.Component<PropsPong, StatePong> {
       return;
     }
     this.setState({ buttonState: "Cancel" });
-    this.socket.emit("start", {}, (player: Player) =>
-    {  
-      if (player.playerNb === 3)
-      {
+    this.socket.emit("start", {}, (player: Player) => {
+      if (player.playerNb === 3) {
         this.setState({
-          msgType: 5,});
-          return;
-      }  
+          msgType: 5,
+        });
+        return;
+      }
       this.setState({
         roomId: player.roomId,
         playerNumber: player.playerNb,
@@ -410,7 +422,7 @@ export default class Game extends React.Component<PropsPong, StatePong> {
 
     return (
       <div>
-        { (
+        {(
           <div className="Radial-background">
             <div className="Page-top">
               <div style={{ display: `${shoWInfo}` }} className="Info-card">
@@ -523,8 +535,8 @@ export default class Game extends React.Component<PropsPong, StatePong> {
           </div>
         )}
         {this.state.redirectChat ? (
-        <Navigate to='/app/chat' replace={true}/>)
-        : null }
+          <Navigate to='/app/chat' replace={true} />)
+          : null}
       </div>
     );
   }
