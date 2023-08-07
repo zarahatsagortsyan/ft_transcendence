@@ -52,9 +52,6 @@ export class TwoFaService {
 		// console.log("Before updating twoFA");
 
 		this.userService.updatetwoFa(id, true);
-<<<<<<< HEAD
-		console.log("Signing jwt");
-=======
         // await this.userRepository.update(user_name, {two_factor_auth: true} );
 
 		// Enable 2FA for user (add method to user module ?)
@@ -63,7 +60,6 @@ export class TwoFaService {
 		// 	data: { twoFA: true },
 		// });
 		// console.log("Signing jwt");
->>>>>>> ca94f235ec7aa2d33d766e3308d7cd58ed5407c2
 		const tokens = await this.authservice.signin_jwt(user_name, id, true);
 		return tokens;
 	}
